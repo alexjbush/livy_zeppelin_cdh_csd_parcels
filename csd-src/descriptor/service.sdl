@@ -1,0 +1,194 @@
+{
+  "name": "LIVY",
+  "label": "Livy",
+  "description": "Apache Livy is a REST Service for Apache Spark. This service runs a Livy REST service.",
+  "version": "5.12.0",
+  "compatibility": {
+    "cdhVersion": {
+      "min": "5.11.0"
+    }
+  },
+  "runAs": {
+    "user": "livy",
+    "group": "livy",
+    "principal": "livy"
+  },
+  "inExpressWizard": true,
+  "icon": "images/icon.png",
+  "parcel": {
+    "requiredTags": [
+      "livy",
+      "spark"
+    ],
+    "optionalTags": [
+      "livy-plugin"
+    ]
+  },
+  "serviceDependencies": [
+    {
+      "name": "YARN",
+      "required": "true"
+    },
+    {
+      "name": "SPARK-ON-YARN",
+      "required": "true"
+    }
+  ],
+  "hdfsDirs": [
+    {
+      "name": "CreateLivyUserDirCommand",
+      "label": "Create Livy User Dir",
+      "description": "Creates the Livy user directory in HDFS.",
+      "directoryDescription": "Livy HDFS user directory",
+      "path": "/user/${principal}",
+      "permissions": "0751"
+    }
+  ],
+  "serviceInit": {
+    "preStartSteps": [
+      {
+        "commandName": "CreateLivyUserDirCommand"
+      }
+    ]
+  },
+  "parameters": [],
+  "roles": [
+    {
+      "name": "LIVY_REST_SERVER",
+      "label": "Livy REST Server",
+      "pluralLabel": "Livy REST Servers",
+      "jvmBased": true,
+      "startRunner": {
+        "program": "scripts/control.sh",
+        "args": [
+          "start"
+        ],
+        "environmentVariables": {
+          "LIVY_LOG_DIR": "${livy_log_dir}",
+          "LIVY_MEMORY": "${livy_max_heapsize}",
+          "KEYSTORE_PASSWORD": "${ssl_server_keystore_password}"
+        }
+      },
+      "kerberosPrincipals": [
+        {
+          "name": "SPARK_PRINCIPAL",
+          "primary": "${principal}",
+          "instance": "${host}"
+        },
+        {
+          "name": "SPNEGO_PRINCIPAL",
+          "primary": "HTTP",
+          "instance": "${host}"
+        }
+      ],
+      "commands": [],
+      "topology": {
+        "minInstances": 1,
+        "maxInstances": 3
+      },
+      "logging": {
+        "configFilename": "spark-conf/log4j.properties",
+        "dir": "/var/log/spark",
+        "filename": "livy-rest-server-${host}.log",
+        "modifiable": true,
+        "loggingType": "log4j"
+      },
+      "parameters": [
+        {
+          "name": "livy_server_port",
+          "label": "Livy REST Server Port",
+          "configName": "livy.server.port",
+          "description": "The port of the livy server REST API",
+          "required": "true",
+          "type": "port",
+          "default": 8998
+        },
+        {
+          "name": "livy_spark_master",
+          "label": "Livy Spark Master",
+          "configName": "livy.spark.master",
+          "description": "What spark master Livy sessions should use.",
+          "type": "string_enum",
+          "validValues": [
+            "yarn-cluster"
+          ],
+          "default": "yarn-cluster"
+        },
+        {
+          "name": "livy_impersonation_enabled",
+          "label": "Livy Impersonation Enabled",
+          "configName": "livy.impersonation.enabled",
+          "description": "If livy should impersonate the requesting users when creating a new session.",
+          "required": "false",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "name": "livy_repl_enable_hive_context",
+          "label": "Livy Hive Context Enabled",
+          "configName": "livy.repl.enableHiveContext",
+          "description": "Whether to enable HiveContext in livy interpreter.",
+          "required": "false",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "name": "livy_spark_jars_packages",
+          "label": "Extra Python Path",
+          "description": "List of packages to add to the Livy interpreter. The format for the entries should be groupId:artifactId:version.",
+          "configName": "livy.spark.jars.packages",
+          "required": "false",
+          "type": "string_array",
+          "default": []
+        },
+        {
+          "name": "livy_spark_jars",
+          "label": "Livy Spark Jars",
+          "description": "List of HDFS paths of Jars to add to the Livy classpath.",
+          "configName": "livy.spark.jars",
+          "type": "uri_array",
+          "default": [],
+          "allowedSchemes": [
+            "hdfs"
+          ]
+        }
+      ],
+      "sslServer": {
+        "keyIdentifier": "livy_rest_server",
+        "keystoreLocationConfigName": "livy.keystore",
+        "keystorePasswordCredentialProviderCompatible": false,
+        "keystorePasswordConfigName": "livy.keystore.password",
+        "keystorePasswordScriptBased": false,
+        "keystoreKeyPasswordConfigName": "livy.key-password",
+        "keystoreKeyPasswordScriptBased": false,
+        "keystoreKeyPasswordCredentialProviderCompatible": false,
+        "keyPasswordOptionality": "required"
+      },
+      "configWriter": {
+        "generators": [
+          {
+            "filename": "livy-conf/livy.conf",
+            "configFormat": "properties",
+            "includedParams": [
+              "livy_server_port",
+              "livy_spark_master",
+              "livy_impersonation_enabled",
+              "livy_repl_enable_hive_context",
+              "livy_spark_jars_packages",
+              "livy_spark_jars",
+              "ssl_server_keystore_location",
+              "ssl_server_keystore_password",
+              "ssl_server_keystore_keypassword"
+            ]
+          }
+        ],
+        "auxConfigGenerators": [
+          {
+            "filename": "spark-conf/spark-env.sh",
+            "sourceFilename": "aux/client/spark-env.sh"
+          }
+        ]
+      }
+    }
+  ]
+}
