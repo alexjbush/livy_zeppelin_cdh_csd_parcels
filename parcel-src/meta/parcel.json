@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "name": "LIVY",
+  "version": "%VERSION%",
+  "setActiveSymlink": true,
+
+  "provides": [
+    "livy"
+  ],
+
+  "depends": "CDH",
+  "replaces": "",
+  "conflicts": "",
+
+  "scripts": {
+    "defines": "livy_env.sh"
+  },
+  "groups": [],
+  "users": {},
+  "packages": [],
+  "components": []
+}
