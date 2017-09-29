@@ -42,7 +42,7 @@ function get_livy {
 }
 
 function build_parcel {
-  if [ -f $parcel_name ]; then
+  if [ -f $parcel_name ] && [ -f manifest.json ]; then
     return
   fi
   if [ ! -d $parcel_folder ]; then
@@ -54,6 +54,7 @@ function build_parcel {
   java -jar cm_ext/validator/target/validator.jar -d ./$parcel_folder
   tar zcvhf ./$parcel_name $parcel_folder --owner=root --group=root
   java -jar cm_ext/validator/target/validator.jar -f ./$parcel_name
+  python cm_ext/make_manifest/make_manifest.py .
 }
 
 case $1 in
@@ -72,6 +73,9 @@ clean)
   fi
   if [ -f $parcel_name ]; then
     rm -rf $parcel_name
+  fi
+  if [ -f manifest.json ]; then
+    rm -rf manifest.json
   fi
   ;;
 *)
