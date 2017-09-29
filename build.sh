@@ -52,7 +52,7 @@ function build_parcel {
   cp -r parcel-src/meta $parcel_folder
   sed -i -e "s/%VERSION%/$LIVY_VERSION/" ./$parcel_folder/meta/parcel.json
   java -jar cm_ext/validator/target/validator.jar -d ./$parcel_folder
-  tar zcvhf ./$parcel_name $parcel_folder
+  tar zcvhf ./$parcel_name $parcel_folder --owner=root --group=root
   java -jar cm_ext/validator/target/validator.jar -f ./$parcel_name
 }
 
