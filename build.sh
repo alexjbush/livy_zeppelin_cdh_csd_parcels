@@ -45,7 +45,7 @@ function build_parcel {
   if [ -f $parcel_name ]; then
     return
   fi
-  if [-d ! $parcel_folder ]; then
+  if [ ! -d $parcel_folder ]; then
     get_livy
     mv $livy_folder $parcel_folder
   fi
