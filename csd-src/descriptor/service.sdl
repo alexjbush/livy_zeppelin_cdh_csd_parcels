@@ -30,7 +30,7 @@
       "required": "true"
     },
     {
-      "name": "SPARK-ON-YARN",
+      "name": "SPARK_ON_YARN",
       "required": "true"
     }
   ],
@@ -64,7 +64,7 @@
           "start"
         ],
         "environmentVariables": {
-          "LIVY_LOG_DIR": "${livy_log_dir}",
+          "LIVY_LOG_DIR": "${log_dir}",
           "LIVY_MEMORY": "${livy_max_heapsize}",
           "ENABLE_SPNEGO" : "${livy_server_spnego_enabled}",
           "ENABLE_ACCESS_CONTROL" : "${livy_server_access_control_enabled}",
@@ -166,7 +166,6 @@
           "name": "livy_server_access_control_users",
           "label": "Access Control Users",
           "description": "List of users allowed to access Livy if Access Control is enabled.",
-          "configName": "livy.spark.jars.packages",
           "required": "false",
           "type": "string_array",
           "default": ["livy", "zeppelin"]

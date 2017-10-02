@@ -57,6 +57,16 @@ function build_parcel {
   python cm_ext/make_manifest/make_manifest.py .
 }
 
+function build_csd {
+  JARNAME=LIVY-${LIVY_VERSION}.jar
+  if [ -f "$JARNAME" ]; then
+    return
+  fi
+  java -jar cm_ext/validator/target/validator.jar -s ./csd-src/descriptor/service.sdl -l SPARK_ON_YARN
+
+  jar -cvf ./$JARNAME -C ./csd-src .
+}
+
 case $1 in
 clean)
   if [ -d cm_ext ]; then
@@ -74,6 +84,9 @@ clean)
   if [ -f $parcel_name ]; then
     rm -rf $parcel_name
   fi
+  if [ -f "LIVY-${LIVY_VERSION}.jar" ]; then
+    rm -rf "LIVY-${LIVY_VERSION}.jar"
+  fi
   if [ -f manifest.json ]; then
     rm -rf manifest.json
   fi
@@ -81,5 +94,6 @@ clean)
 *)
   build_cm_ext
   build_parcel
+  build_csd
   ;;
 esac
