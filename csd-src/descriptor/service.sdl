@@ -88,7 +88,7 @@
       "commands": [],
       "topology": {
         "minInstances": 1,
-        "maxInstances": 3
+        "maxInstances": 1
       },
       "logging": {
         "configFilename": "livy-conf/log4j.properties",
@@ -237,6 +237,13 @@
           {
             "filename": "livy-conf/livy-env.sh",
             "sourceFilename": "aux/client/livy-env.sh"
+          }
+        ],
+        "peerConfigGenerators" : [
+          {
+            "filename": "livy-conf/server.properties",
+            "params": ["livy_server_port"],
+            "roleName": "LIVY_REST_SERVER"
           }
         ]
       }
