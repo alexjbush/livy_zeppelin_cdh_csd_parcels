@@ -66,10 +66,10 @@
         "environmentVariables": {
           "LIVY_LOG_DIR": "${log_dir}",
           "LIVY_MEMORY": "${livy_max_heapsize}",
-          "ENABLE_SPNEGO" : "${livy_server_spnego_enabled}",
-          "ENABLE_ACCESS_CONTROL" : "${livy_server_access_control_enabled}",
-          "ACCESS_CONTROL_USERS" : "${livy_server_access_control_users}",
-          "LIVY_SUPERUSERS" : "${livy_server_superusers}",
+          "ENABLE_SPNEGO": "${livy_server_spnego_enabled}",
+          "ENABLE_ACCESS_CONTROL": "${livy_server_access_control_enabled}",
+          "ACCESS_CONTROL_USERS": "${livy_server_access_control_users}",
+          "LIVY_SUPERUSERS": "${livy_server_superusers}",
           "KEYSTORE_PASSWORD": "${ssl_server_keystore_password}"
         }
       },
@@ -137,30 +137,30 @@
           "default": true
         },
         {
-          "name" : "livy_max_heapsize",
-          "label" : "Java Heap Size of Livy Server in Bytes",
-          "description" : "Maximum size for the Java process heap memory. Passed to Java -Xmx. Measured in bytes.",
-          "required" : "true",
-          "type" : "memory",
-          "unit" : "bytes",
-          "min" : 67108864,
-          "default" : 268435456
+          "name": "livy_max_heapsize",
+          "label": "Java Heap Size of Livy Server in Bytes",
+          "description": "Maximum size for the Java process heap memory. Passed to Java -Xmx. Measured in bytes.",
+          "required": "true",
+          "type": "memory",
+          "unit": "bytes",
+          "min": 67108864,
+          "default": 268435456
         },
         {
-          "name" : "livy_server_spnego_enabled",
-          "label" : "Enable User Authentication",
-          "description" : "Enables user authentication using SPNEGO (requires Kerberos), and enables access control to Spark.",
-          "required" : "false",
-          "type" : "boolean",
-          "default" : false
+          "name": "livy_server_spnego_enabled",
+          "label": "Enable User Authentication",
+          "description": "Enables user authentication using SPNEGO (requires Kerberos), and enables access control to Spark.",
+          "required": "false",
+          "type": "boolean",
+          "default": false
         },
         {
-          "name" : "livy_server_access_control_enabled",
-          "label" : "Enable Access Control",
-          "description" : "Enables user access control to restrict user access to those given in Access Control Users.",
-          "required" : "false",
-          "type" : "boolean",
-          "default" : false
+          "name": "livy_server_access_control_enabled",
+          "label": "Enable Access Control",
+          "description": "Enables user access control to restrict user access to those given in Access Control Users.",
+          "required": "false",
+          "type": "boolean",
+          "default": false
         },
         {
           "name": "livy_server_access_control_users",
@@ -168,7 +168,10 @@
           "description": "List of users allowed to access Livy if Access Control is enabled.",
           "required": "false",
           "type": "string_array",
-          "default": ["livy", "zeppelin"]
+          "default": [
+            "livy",
+            "zeppelin"
+          ]
         },
         {
           "name": "livy_server_superusers",
@@ -176,7 +179,9 @@
           "description": "List of users allowed to proxy to any users (requires User Authentication).",
           "required": "false",
           "type": "string_array",
-          "default": ["zeppelin"]
+          "default": [
+            "zeppelin"
+          ]
         },
         {
           "name": "livy_spark_jars_packages",
@@ -226,6 +231,12 @@
               "ssl_server_keystore_password",
               "ssl_server_keystore_keypassword"
             ]
+          }
+        ],
+        "auxConfigGenerators": [
+          {
+            "filename": "livy-conf/livy-env.sh",
+            "sourceFilename": "aux/client/livy-env.sh"
           }
         ]
       }
