@@ -130,7 +130,7 @@
         {
           "name": "livy_repl_enable_hive_context",
           "label": "Livy Hive Context Enabled",
-          "configName": "livy.repl.enableHiveContext",
+          "configName": "livy.repl.enable-hive-context",
           "description": "Whether to enable HiveContext in livy interpreter.",
           "required": "false",
           "type": "boolean",
