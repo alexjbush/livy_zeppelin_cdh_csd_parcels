@@ -61,6 +61,7 @@
     ]
   },
   "parameters": [],
+  "rolesWithExternalLinks" : ["LIVY_REST_SERVER"],
   "roles": [
     {
       "name": "LIVY_REST_SERVER",
@@ -238,6 +239,12 @@
         "keystoreKeyPasswordCredentialProviderCompatible": false,
         "keyPasswordOptionality": "required"
       },
+      "externalLink" : {
+        "name" : "livy_server_address",
+        "label" : "Livy Server Web UI",
+        "url" : "http://${host}:${livy_server_port}",
+        "secureUrl" : "https://${host}:${livy_server_port}"
+      },
       "configWriter": {
         "generators": [
           {
@@ -265,7 +272,7 @@
         "peerConfigGenerators" : [
           {
             "filename": "livy-conf/server.properties",
-            "params": ["livy_server_port", "livy_spark_version" ],
+            "params": ["livy_server_port", "ssl_enabled", "livy_spark_version" ],
             "roleName": "LIVY_REST_SERVER"
           }
         ]

@@ -100,14 +100,14 @@ function build_zeppelin_parcel {
   python cm_ext/make_manifest/make_manifest.py ./$zeppelin_built_folder
 }
 
-function build_csd {
+function build_livy_csd {
   JARNAME=LIVY-${LIVY_VERSION}.jar
   if [ -f "$JARNAME" ]; then
     return
   fi
-  java -jar cm_ext/validator/target/validator.jar -s ./csd-src/descriptor/service.sdl -l "SPARK_ON_YARN SPARK2_ON_YARN"
+  java -jar cm_ext/validator/target/validator.jar -s ./livy-csd-src/descriptor/service.sdl -l "SPARK_ON_YARN SPARK2_ON_YARN"
 
-  jar -cvf ./$JARNAME -C ./csd-src .
+  jar -cvf ./$JARNAME -C ./livy-csd-src .
 }
 
 case $1 in
@@ -134,7 +134,7 @@ clean)
 *)
   build_cm_ext
   build_livy_parcel
-  build_csd
+  build_livy_csd
   build_zeppelin_parcel
   ;;
 esac
