@@ -62,7 +62,7 @@ function build_csd {
   if [ -f "$JARNAME" ]; then
     return
   fi
-  java -jar cm_ext/validator/target/validator.jar -s ./csd-src/descriptor/service.sdl -l SPARK_ON_YARN
+  java -jar cm_ext/validator/target/validator.jar -s ./csd-src/descriptor/service.sdl -l "SPARK_ON_YARN SPARK2_ON_YARN"
 
   jar -cvf ./$JARNAME -C ./csd-src .
 }

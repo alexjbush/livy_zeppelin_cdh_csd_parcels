@@ -21,6 +21,7 @@
       "spark"
     ],
     "optionalTags": [
+      "spark2",
       "livy-plugin"
     ]
   },
@@ -28,6 +29,14 @@
     {
       "name": "YARN",
       "required": "true"
+    },
+    {
+      "name": "HIVE",
+      "required": "false"
+    },
+    {
+      "name": "SPARK2_ON_YARN",
+      "required": "false"
     },
     {
       "name": "SPARK_ON_YARN",
@@ -70,6 +79,8 @@
           "ENABLE_ACCESS_CONTROL": "${livy_server_access_control_enabled}",
           "ACCESS_CONTROL_USERS": "${livy_server_access_control_users}",
           "LIVY_SUPERUSERS": "${livy_server_superusers}",
+          "HIVE_CONTEXT_ENABLE": "${livy_repl_enable_hive_context}",
+          "LIVY_SPARK_VERSION": "${livy_spark_version}",
           "KEYSTORE_PASSWORD": "${ssl_server_keystore_password}"
         }
       },
@@ -88,7 +99,7 @@
       "commands": [],
       "topology": {
         "minInstances": 1,
-        "maxInstances": 1
+        "maxInstances": 2
       },
       "logging": {
         "configFilename": "livy-conf/log4j.properties",
@@ -117,6 +128,18 @@
             "yarn-cluster"
           ],
           "default": "yarn-cluster"
+        },
+        {
+          "name": "livy_spark_version",
+          "label": "Livy Spark Version",
+          "configName": "spark.version",
+          "description": "Which version of Spark should Livy use (Spark2 requires you to have configured Livy to have a Spark2 service dependency).",
+          "type": "string_enum",
+          "validValues": [
+            "spark",
+            "spark2"
+          ],
+          "default": "spark"
         },
         {
           "name": "livy_impersonation_enabled",
@@ -242,7 +265,7 @@
         "peerConfigGenerators" : [
           {
             "filename": "livy-conf/server.properties",
-            "params": ["livy_server_port"],
+            "params": ["livy_server_port", "livy_spark_version" ],
             "roleName": "LIVY_REST_SERVER"
           }
         ]
