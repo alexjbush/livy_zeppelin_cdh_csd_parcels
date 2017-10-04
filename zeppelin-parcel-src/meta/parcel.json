@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "name": "ZEPPELIN",
+  "version": "%VERSION%",
+  "setActiveSymlink": true,
+
+  "provides": [
+    "zeppelin"
+  ],
+
+  "depends": "LIVY",
+  "replaces": "",
+  "conflicts": "",
+
+  "scripts": {
+    "defines": "zeppelin_env.sh"
+  },
+  "groups": [],
+  "users": {},
+  "packages": [],
+  "components": []
+}
