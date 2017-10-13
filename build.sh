@@ -110,6 +110,16 @@ function build_livy_csd {
   jar -cvf ./$JARNAME -C ./livy-csd-src .
 }
 
+function build_zeppelin_csd {
+  JARNAME=ZEPPELIN-${ZEPPELIN_VERSION}.jar
+  if [ -f "$JARNAME" ]; then
+    return
+  fi
+  java -jar cm_ext/validator/target/validator.jar -s ./zeppelin-csd-src/descriptor/service.sdl -l "LIVY"
+
+  jar -cvf ./$JARNAME -C ./zeppelin-csd-src .
+}
+
 case $1 in
 clean)
   if [ -d cm_ext ]; then
@@ -136,5 +146,6 @@ clean)
   build_livy_parcel
   build_livy_csd
   build_zeppelin_parcel
+  build_zeppelin_csd
   ;;
 esac

@@ -230,6 +230,7 @@
       ],
       "sslServer": {
         "keyIdentifier": "livy_rest_server",
+        "enabledConfigName": "livy.ssl",
         "keystoreLocationConfigName": "livy.keystore",
         "keystorePasswordCredentialProviderCompatible": false,
         "keystorePasswordConfigName": "livy.keystore.password",

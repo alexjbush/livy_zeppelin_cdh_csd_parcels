@@ -8,7 +8,7 @@ function log {
   echo "$timestamp: $1" 1>&2; #stderr
 }
 
-log "Running Livy CSD control script..."
+log "Running Zeppelin CSD control script..."
 log "Detected CDH_VERSION of [$CDH_VERSION]"
 log "Got command as $1"
 
@@ -21,70 +21,59 @@ case $1 in
     else
       log "JAVA_HOME not set"
     fi
-    # Set Spark and Hadoop home and Hadoop conf
-    if [ "$LIVY_SPARK_VERSION" == "spark" ]; then
-      if [ ! -d "$CDH_SPARK_HOME" ]; then
-        log "Cannot find Spark home at: $CDH_SPARK_HOME"
-        exit 2
-      fi
-      export SPARK_HOME=$CDH_SPARK_HOME
-    elif [ "$LIVY_SPARK_VERSION" == "spark2" ]; then
-      if [ ! -d "$CDH_SPARK2_HOME" ]; then
-        log "Cannot find Spark2 home at: $CDH_SPARK2_HOME"
-        exit 2
-      fi
-      export SPARK_HOME=$CDH_SPARK2_HOME
-    else
-      log "Cannot recognise spark version: $LIVY_SPARK_VERSION"
+    # Set Zeppelin conf
+    export ZEPPELIN_CONF_DIR="$CONF_DIR/zeppelin-conf"
+    if [ ! -d "$ZEPPELIN_CONF_DIR" ]; then
+      log "Could not find zeppelin-conf directory at $ZEPPELIN_CONF_DIR"
+      exit 3
     fi
-    export HADOOP_HOME=${HADOOP_HOME:-$(readlink -m "$CDH_HADOOP_HOME")}
-    # Set Hadoop config dir. If hive context is enabled this will be hive-conf since this
-    # contains hive-site, hdfs-site, yarn-site and core-site
-    if [ "$HIVE_CONTEXT_ENABLE" == "true" ]; then
-      if [ -d "$CONF_DIR/hive-conf" ]; then
-        export HADOOP_CONF_DIR="$CONF_DIR/hive-conf"
-      else
-        log "Could not find a hive-site at: $HIVE_SITE"
-        exit 5
-      fi
-    elif [ -d "$CONF_DIR/yarn-conf" ]; then
-      export HADOOP_CONF_DIR="$CONF_DIR/yarn-conf"
-    elif [ -d "$CONF_DIR/hadoop-conf" ]; then
-      export HADOOP_CONF_DIR="$CONF_DIR/hadoop-conf"
-    else
-      log "Could not find a yarn/hadoop conf directory at $CONF_DIR/yarn-conf or $CONF_DIR/hadoop-conf"
-      exit 2
-    fi
-    # Copy hive-site to hadoop dir
     # Set Livy conf
     export LIVY_CONF_DIR="$CONF_DIR/livy-conf"
     if [ ! -d "$LIVY_CONF_DIR" ]; then
       log "Could not find livy-conf directory at $LIVY_CONF_DIR"
       exit 3
     fi
-    # Update Livy conf for Kerberos
-    CONF_FILE="$LIVY_CONF_DIR/livy.conf"
-    if [ ! -f "$CONF_FILE" ]; then
-       log "Cannot find livy config at $CONF_FILE"
+    # Get livy url
+    LIVY_CONF_FILE="$LIVY_CONF_DIR/server.properties"
+    if [ ! -f "$LIVY_CONF_FILE" ]; then
+       log "Cannot find livy config at $LIVY_CONF_FILE"
        exit 3
     fi
-    if [ "$LIVY_PRINCIPAL" != "" ]; then
-       echo "livy.server.auth.type=kerberos" >> "$CONF_FILE"
-       echo "livy.server.launch.kerberos.principal=$LIVY_PRINCIPAL" >> "$CONF_FILE"
-       echo "livy.server.launch.kerberos.keytab=livy.keytab" >> "$CONF_FILE"
-       #SPNEGO config
-       if [ "$ENABLE_SPNEGO" = "true" ] && [ -n "$SPNEGO_PRINCIPAL" ]; then
-         echo "livy.server.auth.kerberos.principal=$SPNEGO_PRINCIPAL" >> "$CONF_FILE"
-         echo "livy.server.auth.kerberos.keytab=livy.keytab" >> "$CONF_FILE"
-         echo "livy.superusers=$LIVY_SUPERUSERS" >> "$CONF_FILE"
-         if [ "$ENABLE_ACCESS_CONTROL" == "true" ]; then
-           echo "livy.server.access-control.enabled=true" >> "$CONF_FILE"
-           echo "livy.server.access-control.users=$ACCESS_CONTROL_USERS" >> "$CONF_FILE"
-         fi
-       fi
+    # Build the LIVY URL, for now get the first host
+    LIVY_HOSTNAME="$( sed 's/^\([^:]\+\):.*/\1/g' "$LIVY_CONF_FILE" | head -1 )"
+    LIVY_SSL_ENABLED="$( grep "${LIVY_HOSTNAME}:livy\.ssl" "$LIVY_CONF_FILE" | sed 's/^.*livy\.ssl=\(.*\)/\1/g' | head -1 )"
+    if [ "$LIVY_SSL_ENABLED" == "true" ]; then
+      if [ -z "$ZEPPELIN_TRUSTSTORE" ]; then
+        log "A truststore must be specified since Livy is using SSL"
+        exit 6
+      fi
+      LIVY_PROTOCOL=https
+    else
+      LIVY_PROTOCOL=http
     fi
-    echo "Starting the Livy server"
-    exec env LIVY_SERVER_JAVA_OPTS="-Xms$LIVY_MEMORY -Xmx$LIVY_MEMORY" CLASSPATH=`hadoop classpath` $LIVY_HOME/bin/livy-server
+    LIVY_PORT="$( grep "${LIVY_HOSTNAME}:livy\.server\.port" "$LIVY_CONF_FILE" | sed 's/^.*livy\.server\.port=\(.*\)/\1/g' | head -1 )"
+    LIVY_URL="${LIVY_PROTOCOL}://${LIVY_HOSTNAME}:${LIVY_PORT}"
+
+    # Update the value of Livy url
+    ZEPPELIN_SITE_FILE="$ZEPPELIN_CONF_DIR/zeppelin-site.xml"
+    if [ ! -f "$ZEPPELIN_SITE_FILE" ]; then
+       log "Cannot find zeppelin-site at $ZEPPELIN_SITE_FILE"
+       exit 3
+    fi
+    sed -i "s/{{LIVY_URL}}/$LIVY_URL/g" "$ZEPPELIN_SITE_FILE"
+
+    INTERPRETER_LIST_DEFAULT="${ZEPPELIN_HOME}/conf/interpreter-list"
+    if [ ! -f "$INTERPRETER_LIST_DEFAULT" ]; then
+       log "Cannot find zeppelin interpreter list at $INTERPRETER_LIST_DEFAULT"
+       exit 3
+    fi
+    INTERPRETER_LIST="${ZEPPELIN_CONF_DIR}/interpreter-list"
+    for interpreter in $ZEPPELIN_INTERPRETER_LIST; do
+        grep "^${interpreter}\s\+.*" "$INTERPRETER_LIST_DEFAULT" >> "$INTERPRETER_LIST"
+    done
+
+    log "Starting the Zeppelin server"
+    exec env ZEPPELIN_JAVA_OPTS="-Xms$ZEPPELIN_MEMORY -Xmx$ZEPPELIN_MEMORY" $ZEPPELIN_HOME/bin/zeppelin.sh
     ;;
   (*)
     echo "Don't understand [$1]"
