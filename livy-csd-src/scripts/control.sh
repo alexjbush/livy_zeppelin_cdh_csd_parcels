@@ -62,18 +62,24 @@ case $1 in
       log "Could not find livy-conf directory at $LIVY_CONF_DIR"
       exit 3
     fi
-    # Update Livy conf for Kerberos
+    # Update Livy conf for Kerberos and ssl
     CONF_FILE="$LIVY_CONF_DIR/livy.conf"
     if [ ! -f "$CONF_FILE" ]; then
        log "Cannot find livy config at $CONF_FILE"
        exit 3
     fi
+    # Config for SSL
+    if [ "$SSL_ENABLED" == "true" ]; then
+       echo "livy.keystore=$KEYSTORE_LOCATION" >> "$CONF_FILE"
+       echo "livy.keystore.password=$KEYSTORE_PASSWORD" >> "$CONF_FILE"
+       echo "livy.keystore.keypassword=$KEYSTORE_KEYPASSWORD" >> "$CONF_FILE"
+    fi
     if [ "$LIVY_PRINCIPAL" != "" ]; then
-       echo "livy.server.auth.type=kerberos" >> "$CONF_FILE"
        echo "livy.server.launch.kerberos.principal=$LIVY_PRINCIPAL" >> "$CONF_FILE"
        echo "livy.server.launch.kerberos.keytab=livy.keytab" >> "$CONF_FILE"
        #SPNEGO config
        if [ "$ENABLE_SPNEGO" = "true" ] && [ -n "$SPNEGO_PRINCIPAL" ]; then
+         echo "livy.server.auth.type=kerberos" >> "$CONF_FILE"
          echo "livy.server.auth.kerberos.principal=$SPNEGO_PRINCIPAL" >> "$CONF_FILE"
          echo "livy.server.auth.kerberos.keytab=livy.keytab" >> "$CONF_FILE"
          echo "livy.superusers=$LIVY_SUPERUSERS" >> "$CONF_FILE"

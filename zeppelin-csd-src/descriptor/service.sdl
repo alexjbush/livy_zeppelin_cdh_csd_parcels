@@ -64,7 +64,9 @@
           "ZEPPELIN_LOG_DIR": "${log_dir}",
           "ZEPPELIN_MEMORY": "${zeppelin_max_heapsize}",
           "ZEPPELIN_INTERPRETER_LIST": "${zeppelin_interpreter_list}",
-          "ZEPPELIN_TRUSTSTORE": "${ssl_client_truststore_location}"
+          "ZEPPELIN_TRUSTSTORE": "${ssl_client_truststore_location}",
+          "ZEPPELIN_TRUSTSTORE_PASSWORD": "${ssl_client_truststore_password}",
+          "ZEPPELIN_DATA_DIR": "${zeppelin_data_dir}"
         }
       },
       "kerberosPrincipals": [
@@ -81,7 +83,7 @@
       },
       "logging": {
         "configFilename": "zeppelin-conf/log4j.properties",
-        "dir": "/var/log/livy",
+        "dir": "/var/log/zeppelin",
         "filename": "zeppelin-server-${host}.log",
         "modifiable": true,
         "loggingType": "log4j"
@@ -127,10 +129,9 @@
           ]
         },
         {
-          "name": "zeppelin_notebook_dir",
-          "label": "Notebook Directoryir",
-          "configName": "zeppelin.notebook.dir",
-          "description": "The root directory where notebook directories are saved.",
+          "name": "zeppelin_data_dir",
+          "label": "Zeppelin Data Directory",
+          "description": "The root data directory where the notebook and jetty temporary directories are stored.",
           "required": "false",
           "type": "path",
           "pathType": "localDataDir",
@@ -179,12 +180,59 @@
               "zeppelin_server_port",
               "zeppelin_server_ssl_port",
               "zeppelin_anonymous_allowed",
-              "zeppelin_notebook_dir",
               "ssl_server_keystore_location",
               "ssl_server_keystore_password",
               "ssl_client_truststore_location",
               "ssl_client_truststore_password"
             ],
+            "kerberosPrincipals" : [
+              {
+                "principalName" : "ZEPPELIN_PRINCIPAL",
+                "propertyName" : "zeppelin.livy.principal"
+              }
+            ],
+            "additionalConfigs" : [
+              {
+                "key" : "zeppelin.livy.ssl.trustStore",
+                "value" : "${ssl_client_truststore_location}"
+              },
+              {
+                "key" : "zeppelin.livy.ssl.trustStorePassword",
+                "value" : "${ssl_client_truststore_password}"
+              },
+              {
+                "key" : "zeppelin.war.tempdir",
+                "value" : "${zeppelin_data_dir}/webapps"
+              },
+              {
+                "key" : "zeppelin.notebook.dir",
+                "value" : "${zeppelin_data_dir}/notebook"
+              },
+              {
+                "key" : "zeppelin.dep.localrepo",
+                "value" : "${zeppelin_data_dir}/local-repo"
+              },
+              {
+                "key" : "zeppelin.interpreter.localRepo",
+                "value" : "${zeppelin_data_dir}/local-repo"
+              },
+              {
+                "key" : "zeppelin.interpreter.dir",
+                "value" : "${zeppelin_data_dir}/interpreter"
+              },
+              {
+                "key" : "zeppelin.livy.keytab",
+                "value" : "zeppelin.keytab"
+              },
+              {
+                "key" : "zeppelin.livy.url",
+                "value" : "{{LIVY_URL}}"
+              }
+            ]
+          },
+          {
+            "filename": "zeppelin-conf/livy-defaults.conf",
+            "configFormat": "properties",
             "kerberosPrincipals" : [
               {
                 "principalName" : "ZEPPELIN_PRINCIPAL",
@@ -215,6 +263,10 @@
           {
             "filename": "zeppelin-conf/zeppelin-env.sh",
             "sourceFilename": "aux/client/zeppelin-env.sh"
+          },
+          {
+            "filename": "zeppelin-conf/livy-interpreter-setting.json",
+            "sourceFilename": "aux/client/livy-interpreter-setting.json"
           }
         ]
       }

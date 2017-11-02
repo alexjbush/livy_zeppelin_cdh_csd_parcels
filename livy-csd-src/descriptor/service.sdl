@@ -82,7 +82,10 @@
           "LIVY_SUPERUSERS": "${livy_server_superusers}",
           "HIVE_CONTEXT_ENABLE": "${livy_repl_enable_hive_context}",
           "LIVY_SPARK_VERSION": "${livy_spark_version}",
-          "KEYSTORE_PASSWORD": "${ssl_server_keystore_password}"
+          "SSL_ENABLED": "${ssl_enabled}",
+          "KEYSTORE_LOCATION": "${ssl_server_keystore_location}",
+          "KEYSTORE_PASSWORD": "${ssl_server_keystore_keypassword}",
+          "KEYSTORE_KEYPASSWORD": "${ssl_server_keystore_password}"
         }
       },
       "kerberosPrincipals": [
@@ -198,6 +201,15 @@
           ]
         },
         {
+          "name": "livy_server_host",
+          "label": "Livy Bind Address",
+          "configName": "livy.server.host",
+          "description": "What host address to start the server on.",
+          "required": "false",
+          "type": "string",
+          "default": "0.0.0.0"
+        },
+        {
           "name": "livy_server_superusers",
           "label": "Livy Superusers",
           "description": "List of users allowed to proxy to any users (requires User Authentication).",
@@ -231,11 +243,8 @@
       "sslServer": {
         "keyIdentifier": "livy_rest_server",
         "enabledConfigName": "livy.ssl",
-        "keystoreLocationConfigName": "livy.keystore",
         "keystorePasswordCredentialProviderCompatible": false,
-        "keystorePasswordConfigName": "livy.keystore.password",
         "keystorePasswordScriptBased": false,
-        "keystoreKeyPasswordConfigName": "livy.key-password",
         "keystoreKeyPasswordScriptBased": false,
         "keystoreKeyPasswordCredentialProviderCompatible": false,
         "keyPasswordOptionality": "required"
@@ -258,9 +267,7 @@
               "livy_repl_enable_hive_context",
               "livy_spark_jars_packages",
               "livy_spark_jars",
-              "ssl_server_keystore_location",
-              "ssl_server_keystore_password",
-              "ssl_server_keystore_keypassword"
+              "livy_server_host"
             ]
           }
         ],
@@ -279,5 +286,21 @@
         ]
       }
     }
-  ]
+  ],
+  "gateway" : {
+    "alternatives" : {
+      "name" : "livy-conf",
+      "priority" : 51,
+      "linkRoot" : "/etc/livy"
+    },
+    "configWriter" : {
+       "peerConfigGenerators" : [
+          {
+            "filename": "livy-conf/server.properties",
+            "params": ["livy_server_port", "ssl_enabled", "livy_spark_version" ],
+            "roleName": "LIVY_REST_SERVER"
+          }
+        ]
+     }
+  }
 }

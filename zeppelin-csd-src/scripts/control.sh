@@ -40,8 +40,8 @@ case $1 in
        exit 3
     fi
     # Build the LIVY URL, for now get the first host
-    LIVY_HOSTNAME="$( sed 's/^\([^:]\+\):.*/\1/g' "$LIVY_CONF_FILE" | head -1 )"
-    LIVY_SSL_ENABLED="$( grep "${LIVY_HOSTNAME}:livy\.ssl" "$LIVY_CONF_FILE" | sed 's/^.*livy\.ssl=\(.*\)/\1/g' | head -1 )"
+    LIVY_HOSTNAME="$( sed 's#^\([^:]\+\):.*#\1#g' "$LIVY_CONF_FILE" | head -1 )"
+    LIVY_SSL_ENABLED="$( grep "${LIVY_HOSTNAME}:livy\.ssl" "$LIVY_CONF_FILE" | sed 's#^.*livy\.ssl=\(.*\)#\1#g' | head -1 )"
     if [ "$LIVY_SSL_ENABLED" == "true" ]; then
       if [ -z "$ZEPPELIN_TRUSTSTORE" ]; then
         log "A truststore must be specified since Livy is using SSL"
@@ -51,25 +51,24 @@ case $1 in
     else
       LIVY_PROTOCOL=http
     fi
-    LIVY_PORT="$( grep "${LIVY_HOSTNAME}:livy\.server\.port" "$LIVY_CONF_FILE" | sed 's/^.*livy\.server\.port=\(.*\)/\1/g' | head -1 )"
+    LIVY_PORT="$( grep "${LIVY_HOSTNAME}:livy\.server\.port" "$LIVY_CONF_FILE" | sed 's#^.*livy\.server\.port=\(.*\)#\1#g' | head -1 )"
     LIVY_URL="${LIVY_PROTOCOL}://${LIVY_HOSTNAME}:${LIVY_PORT}"
 
-    # Update the value of Livy url
-    ZEPPELIN_SITE_FILE="$ZEPPELIN_CONF_DIR/zeppelin-site.xml"
-    if [ ! -f "$ZEPPELIN_SITE_FILE" ]; then
-       log "Cannot find zeppelin-site at $ZEPPELIN_SITE_FILE"
-       exit 3
-    fi
-    sed -i "s/{{LIVY_URL}}/$LIVY_URL/g" "$ZEPPELIN_SITE_FILE"
-
-    INTERPRETER_LIST_DEFAULT="${ZEPPELIN_HOME}/conf/interpreter-list"
-    if [ ! -f "$INTERPRETER_LIST_DEFAULT" ]; then
-       log "Cannot find zeppelin interpreter list at $INTERPRETER_LIST_DEFAULT"
-       exit 3
-    fi
-    INTERPRETER_LIST="${ZEPPELIN_CONF_DIR}/interpreter-list"
+    mkdir -p "$ZEPPELIN_DATA_DIR/interpreter"
     for interpreter in $ZEPPELIN_INTERPRETER_LIST; do
-        grep "^${interpreter}\s\+.*" "$INTERPRETER_LIST_DEFAULT" >> "$INTERPRETER_LIST"
+        if [ -d "$ZEPPELIN_DATA_DIR/interpreter/$interpreter" ]; then
+            \rm -rf "$ZEPPELIN_DATA_DIR/interpreter/$interpreter"
+        fi
+        cp -r "${ZEPPELIN_HOME}/interpreter/$interpreter" "$ZEPPELIN_DATA_DIR/interpreter/$interpreter"
+        export ZEPPELIN_CLASSPATH="$ZEPPELIN_CLASSPATH:$ZEPPELIN_DATA_DIR/interpreter/$interpreter"
+        if [ "$interpreter" == "livy" ]; then
+            LIVY_INTERPRETER_CONF="$ZEPPELIN_DATA_DIR/interpreter/livy/interpreter-setting.json"
+            cp "$ZEPPELIN_CONF_DIR/livy-interpreter-setting.json" "$LIVY_INTERPRETER_CONF"
+            sed -i "s#{{LIVY_URL}}#$LIVY_URL#g" "$LIVY_INTERPRETER_CONF"
+            sed -i "s#{{LIVY_PRINCIPAL}}#$ZEPPELIN_PRINCIPAL#g" "$LIVY_INTERPRETER_CONF"
+            sed -i "s#{{LIVY_KEYTAB}}#zeppelin.keytab#g" "$LIVY_INTERPRETER_CONF"
+            jar uf "$ZEPPELIN_DATA_DIR"/interpreter/livy/zeppelin-livy-*.jar -C "$ZEPPELIN_DATA_DIR"/interpreter/livy/ interpreter-setting.json
+        fi
     done
 
     log "Starting the Zeppelin server"
