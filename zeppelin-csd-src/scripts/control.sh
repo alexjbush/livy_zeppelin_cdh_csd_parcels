@@ -54,22 +54,11 @@ case $1 in
     LIVY_PORT="$( grep "${LIVY_HOSTNAME}:livy\.server\.port" "$LIVY_CONF_FILE" | sed 's#^.*livy\.server\.port=\(.*\)#\1#g' | head -1 )"
     LIVY_URL="${LIVY_PROTOCOL}://${LIVY_HOSTNAME}:${LIVY_PORT}"
 
-    mkdir -p "$ZEPPELIN_DATA_DIR/interpreter"
-    for interpreter in $ZEPPELIN_INTERPRETER_LIST; do
-        if [ -d "$ZEPPELIN_DATA_DIR/interpreter/$interpreter" ]; then
-            \rm -rf "$ZEPPELIN_DATA_DIR/interpreter/$interpreter"
-        fi
-        cp -r "${ZEPPELIN_HOME}/interpreter/$interpreter" "$ZEPPELIN_DATA_DIR/interpreter/$interpreter"
-        export ZEPPELIN_CLASSPATH="$ZEPPELIN_CLASSPATH:$ZEPPELIN_DATA_DIR/interpreter/$interpreter"
-        if [ "$interpreter" == "livy" ]; then
-            LIVY_INTERPRETER_CONF="$ZEPPELIN_DATA_DIR/interpreter/livy/interpreter-setting.json"
-            cp "$ZEPPELIN_CONF_DIR/livy-interpreter-setting.json" "$LIVY_INTERPRETER_CONF"
-            sed -i "s#{{LIVY_URL}}#$LIVY_URL#g" "$LIVY_INTERPRETER_CONF"
-            sed -i "s#{{LIVY_PRINCIPAL}}#$ZEPPELIN_PRINCIPAL#g" "$LIVY_INTERPRETER_CONF"
-            sed -i "s#{{LIVY_KEYTAB}}#zeppelin.keytab#g" "$LIVY_INTERPRETER_CONF"
-            jar uf "$ZEPPELIN_DATA_DIR"/interpreter/livy/zeppelin-livy-*.jar -C "$ZEPPELIN_DATA_DIR"/interpreter/livy/ interpreter-setting.json
-        fi
-    done
+    LIVY_INTERPRETER_CONF="$ZEPPELIN_CONF_DIR/interpreter.json"
+    sed -i "s#{{LIVY_URL}}#$LIVY_URL#g" "$LIVY_INTERPRETER_CONF"
+    sed -i "s#{{LIVY_PRINCIPAL}}#$ZEPPELIN_PRINCIPAL#g" "$LIVY_INTERPRETER_CONF"
+    sed -i "s#{{LIVY_KEYTAB}}#zeppelin.keytab#g" "$LIVY_INTERPRETER_CONF"
+    sed -i "s#{{DATA_DIR}}##g" "$ZEPPELIN_DATA_DIR"
 
     log "Starting the Zeppelin server"
     exec env ZEPPELIN_JAVA_OPTS="-Xms$ZEPPELIN_MEMORY -Xmx$ZEPPELIN_MEMORY" $ZEPPELIN_HOME/bin/zeppelin.sh

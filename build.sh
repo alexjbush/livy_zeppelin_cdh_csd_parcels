@@ -141,11 +141,16 @@ clean)
     rm -rf "LIVY-${LIVY_VERSION}.jar"
   fi
   ;;
-*)
+parcel)
   build_cm_ext
   build_livy_parcel
-  build_livy_csd
   build_zeppelin_parcel
+  ;;
+csd)
+  build_livy_csd
   build_zeppelin_csd
+  ;;
+*)
+  echo "Usage: $0 [parcel|csd|clean]"
   ;;
 esac

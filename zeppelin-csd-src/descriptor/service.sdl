@@ -217,10 +217,6 @@
                 "value" : "${zeppelin_data_dir}/local-repo"
               },
               {
-                "key" : "zeppelin.interpreter.dir",
-                "value" : "${zeppelin_data_dir}/interpreter"
-              },
-              {
                 "key" : "zeppelin.livy.keytab",
                 "value" : "zeppelin.keytab"
               },
@@ -265,8 +261,8 @@
             "sourceFilename": "aux/client/zeppelin-env.sh"
           },
           {
-            "filename": "zeppelin-conf/livy-interpreter-setting.json",
-            "sourceFilename": "aux/client/livy-interpreter-setting.json"
+            "filename": "zeppelin-conf/interpreter.json",
+            "sourceFilename": "aux/client/interpreter.json"
           }
         ]
       }
