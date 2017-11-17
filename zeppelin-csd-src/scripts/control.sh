@@ -39,26 +39,57 @@ case $1 in
        log "Cannot find livy config at $LIVY_CONF_FILE"
        exit 3
     fi
-    # Build the LIVY URL, for now get the first host
-    LIVY_HOSTNAME="$( sed 's#^\([^:]\+\):.*#\1#g' "$LIVY_CONF_FILE" | head -1 )"
-    LIVY_SSL_ENABLED="$( grep "${LIVY_HOSTNAME}:livy\.ssl" "$LIVY_CONF_FILE" | sed 's#^.*livy\.ssl=\(.*\)#\1#g' | head -1 )"
-    if [ "$LIVY_SSL_ENABLED" == "true" ]; then
-      if [ -z "$ZEPPELIN_TRUSTSTORE" ]; then
-        log "A truststore must be specified since Livy is using SSL"
-        exit 6
-      fi
-      LIVY_PROTOCOL=https
-    else
-      LIVY_PROTOCOL=http
-    fi
-    LIVY_PORT="$( grep "${LIVY_HOSTNAME}:livy\.server\.port" "$LIVY_CONF_FILE" | sed 's#^.*livy\.server\.port=\(.*\)#\1#g' | head -1 )"
-    LIVY_URL="${LIVY_PROTOCOL}://${LIVY_HOSTNAME}:${LIVY_PORT}"
 
     LIVY_INTERPRETER_CONF="$ZEPPELIN_CONF_DIR/interpreter.json"
-    sed -i "s#{{LIVY_URL}}#$LIVY_URL#g" "$LIVY_INTERPRETER_CONF"
-    sed -i "s#{{LIVY_PRINCIPAL}}#$ZEPPELIN_PRINCIPAL#g" "$LIVY_INTERPRETER_CONF"
-    sed -i "s#{{LIVY_KEYTAB}}#zeppelin.keytab#g" "$LIVY_INTERPRETER_CONF"
-    sed -i "s#{{DATA_DIR}}##g" "$ZEPPELIN_DATA_DIR"
+    function get_livy_url {
+        LIVY_HOSTNAME="$( grep "$1\$" "$LIVY_CONF_FILE" | sed 's#^\([^:]\+\):.*#\1#g' | head -1 )"
+        if [ -z "$LIVY_HOSTNAME" ]; then
+          # Spark version not found
+          return
+        fi
+        LIVY_SSL_ENABLED="$( grep "${LIVY_HOSTNAME}:livy\.ssl" "$LIVY_CONF_FILE" | sed 's#^.*livy\.ssl=\(.*\)#\1#g' | head -1 )"
+        if [ "$LIVY_SSL_ENABLED" == "true" ]; then
+          if [ -z "$ZEPPELIN_TRUSTSTORE" ]; then
+            log "A truststore must be specified since Livy is using SSL"
+            exit 6
+          fi
+          LIVY_PROTOCOL=https
+        else
+          LIVY_PROTOCOL=http
+        fi
+        LIVY_PORT="$( grep "${LIVY_HOSTNAME}:livy\.server\.port" "$LIVY_CONF_FILE" | sed 's#^.*livy\.server\.port=\(.*\)#\1#g' | head -1 )"
+        LIVY_URL="${LIVY_PROTOCOL}://${LIVY_HOSTNAME}:${LIVY_PORT}"
+        echo "$LIVY_URL"
+        return
+    }
+    function spark_interpreter {
+      SPARK_VERSION="$1" #spark or spark2
+      INTERPRETER_ID="$2" # some ID like 2CZ9EX8ZX
+      INTERPRETER_NAME="$3" # some name like livy or livy2
+      LIVY_URL="$( get_livy_url "$SPARK_VERSION" )"
+      if [ -z "$LIVY_URL" ]; then
+        log "No endpoint for $SPARK_VERSION, skipping interpreter setup"
+        sed -i "s#{{INTERPRETER_BINDING_$SPARK_VERSION}}##g" "$LIVY_INTERPRETER_CONF"
+        sed -i "s#{{SPARK_CONFIG_$SPARK_VERSION}}##g" "$LIVY_INTERPRETER_CONF"
+      else
+        LIVY_TEMP_CONF="$ZEPPELIN_CONF_DIR/interpreter.livy.json.$SPARK_VERSION"
+        cp "$ZEPPELIN_CONF_DIR/interpreter.livy.json" "$LIVY_TEMP_CONF"
+        sed -i "s#{{LIVY_URL}}#$LIVY_URL#g" "$LIVY_TEMP_CONF"
+        sed -i "s#{{LIVY_PRINCIPAL}}#$ZEPPELIN_PRINCIPAL#g" "$LIVY_TEMP_CONF"
+        sed -i "s#{{LIVY_KEYTAB}}#zeppelin.keytab#g" "$LIVY_TEMP_CONF"
+        sed -i "s#{{DATA_DIR}}#$ZEPPELIN_DATA_DIR#g" "$LIVY_TEMP_CONF"
+        sed -i "s#{{INTERPRETER_NAME}}#$INTERPRETER_NAME#g" "$LIVY_TEMP_CONF"
+        sed -i "s#{{INTERPRETER_ID}}#$INTERPRETER_ID#g" "$LIVY_TEMP_CONF"
+        sed -e "/{{SPARK_CONFIG_$SPARK_VERSION}}/ {" -e "r $LIVY_TEMP_CONF" -e 'd' -e '}' -i "$LIVY_INTERPRETER_CONF"
+        sed -i "s#{{INTERPRETER_BINDING_$SPARK_VERSION}}#\"$INTERPRETER_ID\",#g" "$LIVY_INTERPRETER_CONF"
+      fi
+    }
+    spark_interpreter "spark" "2CYCWRZPP" "livy"
+    spark_interpreter "spark2" "2CYCWDZPP" "livy2"
+    SHIRO_CONF="$ZEPPELIN_CONF_DIR/shiro.ini"
+    if [ "$ZEPPELIN_SHIRO_ENABLED" == "false" ]; then
+      mv "$SHIRO_CONF" "${SHIRO_CONF}.template"
+    fi
 
     log "Starting the Zeppelin server"
     exec env ZEPPELIN_JAVA_OPTS="-Xms$ZEPPELIN_MEMORY -Xmx$ZEPPELIN_MEMORY" $ZEPPELIN_HOME/bin/zeppelin.sh

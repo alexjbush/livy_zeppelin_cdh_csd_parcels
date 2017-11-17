@@ -66,6 +66,7 @@
           "ZEPPELIN_INTERPRETER_LIST": "${zeppelin_interpreter_list}",
           "ZEPPELIN_TRUSTSTORE": "${ssl_client_truststore_location}",
           "ZEPPELIN_TRUSTSTORE_PASSWORD": "${ssl_client_truststore_password}",
+          "ZEPPELIN_SHIRO_ENABLED": "${zeppelin_shiro_enabled}",
           "ZEPPELIN_DATA_DIR": "${zeppelin_data_dir}"
         }
       },
@@ -115,6 +116,23 @@
           "required": "false",
           "type": "boolean",
           "default": true
+        },
+        {
+          "name": "zeppelin_shiro_enabled",
+          "label": "Shiro Enabled",
+          "description": "Whether Shiro authentication should be enabled.",
+          "required": "false",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "name": "zeppelin_notebook_public",
+          "label": "Notebooks Public By Default",
+          "description": "Whether to set Notebooks to be public by default.",
+          "configName": "zeppelin.notebook.public",
+          "required": "false",
+          "type": "boolean",
+          "default": false
         },
         {
           "name": "zeppelin_interpreter_list",
@@ -180,6 +198,7 @@
               "zeppelin_server_port",
               "zeppelin_server_ssl_port",
               "zeppelin_anonymous_allowed",
+              "zeppelin_notebook_public",
               "ssl_server_keystore_location",
               "ssl_server_keystore_password",
               "ssl_client_truststore_location",
@@ -259,6 +278,14 @@
           {
             "filename": "zeppelin-conf/zeppelin-env.sh",
             "sourceFilename": "aux/client/zeppelin-env.sh"
+          },
+          {
+            "filename": "zeppelin-conf/shiro.ini",
+            "sourceFilename": "aux/client/shiro.ini"
+          },
+          {
+            "filename": "zeppelin-conf/interpreter.livy.json",
+            "sourceFilename": "aux/client/interpreter.livy.json"
           },
           {
             "filename": "zeppelin-conf/interpreter.json",

@@ -1,5 +1,7 @@
 {
   "interpreterSettings": {
+{{SPARK_CONFIG_spark}}
+{{SPARK_CONFIG_spark2}}
     "2CZ9EX8ZX": {
       "id": "2CZ9EX8ZX",
       "name": "md",
@@ -30,98 +32,12 @@
         "users": [],
         "isUserImpersonate": false
       }
-    },
-    "2CYCWRZPP": {
-      "id": "2CYCWRZPP",
-      "name": "livy",
-      "group": "livy",
-      "properties": {
-        "zeppelin.livy.pull_status.interval.millis": "1000",
-        "livy.spark.executor.memory": "",
-        "zeppelin.livy.session.create_timeout": "120",
-        "zeppelin.livy.principal": "{{LIVY_PRINCIPAL}}",
-        "zeppelin.livy.spark.sql.maxResult": "1000",
-        "zeppelin.interpreter.localRepo": "{{DATA_DIR}}/local-repo/2CYCWRZPP",
-        "zeppelin.livy.keytab": "{{LIVY_KEYTAB}}",
-        "zeppelin.interpreter.output.limit": "102400",
-        "zeppelin.livy.concurrentSQL": "false",
-        "livy.spark.executor.cores": "",
-        "zeppelin.livy.displayAppInfo": "true",
-        "zeppelin.livy.url": "{{LIVY_URL}}",
-        "livy.spark.dynamicAllocation.minExecutors": "",
-        "livy.spark.driver.cores": "",
-        "livy.spark.jars.packages": "",
-        "livy.spark.dynamicAllocation.enabled": "",
-        "livy.spark.executor.instances": "",
-        "livy.spark.dynamicAllocation.cachedExecutorIdleTimeout": "",
-        "livy.spark.dynamicAllocation.maxExecutors": "",
-        "livy.spark.dynamicAllocation.initialExecutors": "",
-        "livy.spark.driver.memory": ""
-      },
-      "status": "READY",
-      "interpreterGroup": [
-        {
-          "name": "spark",
-          "class": "org.apache.zeppelin.livy.LivySparkInterpreter",
-          "defaultInterpreter": true,
-          "editor": {
-            "language": "scala",
-            "editOnDblClick": false
-          }
-        },
-        {
-          "name": "sql",
-          "class": "org.apache.zeppelin.livy.LivySparkSQLInterpreter",
-          "defaultInterpreter": false,
-          "editor": {
-            "language": "sql",
-            "editOnDblClick": false
-          }
-        },
-        {
-          "name": "pyspark",
-          "class": "org.apache.zeppelin.livy.LivyPySparkInterpreter",
-          "defaultInterpreter": false,
-          "editor": {
-            "language": "python",
-            "editOnDblClick": false
-          }
-        },
-        {
-          "name": "pyspark3",
-          "class": "org.apache.zeppelin.livy.LivyPySpark3Interpreter",
-          "defaultInterpreter": false,
-          "editor": {
-            "language": "python",
-            "editOnDblClick": false
-          }
-        },
-        {
-          "name": "sparkr",
-          "class": "org.apache.zeppelin.livy.LivySparkRInterpreter",
-          "defaultInterpreter": false,
-          "editor": {
-            "language": "r",
-            "editOnDblClick": false
-          }
-        }
-      ],
-      "dependencies": [],
-      "option": {
-        "remote": true,
-        "port": -1,
-        "perNote": "shared",
-        "perUser": "scoped",
-        "isExistingProcess": false,
-        "setPermission": false,
-        "users": [],
-        "isUserImpersonate": false
-      }
     }
   },
   "interpreterBindings": {
     "2CYUMWD38": [
-      "2CYCWRZPP",
+      {{INTERPRETER_BINDING_spark}}
+      {{INTERPRETER_BINDING_spark2}}
       "2CZ9EX8ZX"
     ]
   },
