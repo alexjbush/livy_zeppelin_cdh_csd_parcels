@@ -62,6 +62,8 @@
         ],
         "environmentVariables": {
           "ZEPPELIN_LOG_DIR": "${log_dir}",
+          "INTERPRETER_FOR_NOTE": "${interpreter_for_note}",
+          "INTERPRETER_FOR_USER": "${interpreter_for_user}",
           "ZEPPELIN_MEMORY": "${zeppelin_max_heapsize}",
           "ZEPPELIN_INTERPRETER_LIST": "${zeppelin_interpreter_list}",
           "ZEPPELIN_TRUSTSTORE": "${ssl_client_truststore_location}",
@@ -147,6 +149,30 @@
           ]
         },
         {
+          "name": "interpreter_for_note",
+          "label": "Interpreter for notes",
+          "description": "In 'shared' mode, every notebook bound to the Interpreter Setting will share the single Interpreter instance. In 'scoped' mode, each notebook will create new Interpreter instance in the same interpreter process. In 'isolated' mode, each notebook will create new Interpreter process.",
+          "type": "string_enum",
+          "validValues": [
+            "shared",
+            "scoped",
+            "isolated"
+          ],
+          "default": "shared"
+        },
+        {
+          "name": "interpreter_for_user",
+          "label": "Interpreter for users",
+          "description": "In the case of the per user scope (available in a multi-user environment), Zeppelin manages interpreter sessions on a per user basis rather than a per note basis.",
+          "type": "string_enum",
+          "validValues": [
+            "shared",
+            "scoped",
+            "isolated"
+          ],
+          "default": "scoped"
+        },
+        {
           "name": "zeppelin_data_dir",
           "label": "Zeppelin Data Directory",
           "description": "The root data directory where the notebook and jetty temporary directories are stored.",
@@ -199,16 +225,11 @@
               "zeppelin_server_ssl_port",
               "zeppelin_anonymous_allowed",
               "zeppelin_notebook_public",
+              "ssl_enabled",
               "ssl_server_keystore_location",
               "ssl_server_keystore_password",
               "ssl_client_truststore_location",
               "ssl_client_truststore_password"
-            ],
-            "kerberosPrincipals" : [
-              {
-                "principalName" : "ZEPPELIN_PRINCIPAL",
-                "propertyName" : "zeppelin.livy.principal"
-              }
             ],
             "additionalConfigs" : [
               {
@@ -234,42 +255,6 @@
               {
                 "key" : "zeppelin.interpreter.localRepo",
                 "value" : "${zeppelin_data_dir}/local-repo"
-              },
-              {
-                "key" : "zeppelin.livy.keytab",
-                "value" : "zeppelin.keytab"
-              },
-              {
-                "key" : "zeppelin.livy.url",
-                "value" : "{{LIVY_URL}}"
-              }
-            ]
-          },
-          {
-            "filename": "zeppelin-conf/livy-defaults.conf",
-            "configFormat": "properties",
-            "kerberosPrincipals" : [
-              {
-                "principalName" : "ZEPPELIN_PRINCIPAL",
-                "propertyName" : "zeppelin.livy.principal"
-              }
-            ],
-            "additionalConfigs" : [
-              {
-                "key" : "zeppelin.livy.ssl.trustStore",
-                "value" : "${ssl_client_truststore_location}"
-              },
-              {
-                "key" : "zeppelin.livy.ssl.trustStorePassword",
-                "value" : "${ssl_client_truststore_password}"
-              },
-              {
-                "key" : "zeppelin.livy.keytab",
-                "value" : "zeppelin.keytab"
-              },
-              {
-                "key" : "zeppelin.livy.url",
-                "value" : "{{LIVY_URL}}"
               }
             ]
           }

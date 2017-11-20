@@ -129,9 +129,21 @@
           "description": "What spark master Livy sessions should use.",
           "type": "string_enum",
           "validValues": [
-            "yarn-cluster"
+            "yarn"
           ],
-          "default": "yarn-cluster"
+          "default": "yarn"
+        },
+        {
+          "name": "livy_spark_deploy_mode",
+          "label": "Livy Spark Deploy Mode",
+          "configName": "livy.spark.deploy-mode",
+          "description": "What spark deploy mode Livy sessions should use.",
+          "type": "string_enum",
+          "validValues": [
+            "client",
+            "cluster"
+          ],
+          "default": "client"
         },
         {
           "name": "livy_spark_version",
@@ -263,6 +275,7 @@
             "includedParams": [
               "livy_server_port",
               "livy_spark_master",
+              "livy_spark_deploy_mode",
               "livy_impersonation_enabled",
               "livy_repl_enable_hive_context",
               "livy_spark_jars_packages",

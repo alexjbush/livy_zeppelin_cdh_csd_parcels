@@ -86,6 +86,8 @@ case $1 in
     }
     spark_interpreter "spark" "2CYCWRZPP" "livy"
     spark_interpreter "spark2" "2CYCWDZPP" "livy2"
+    sed -i "s#{{INTERPRETER_FOR_NOTE}}#$INTERPRETER_FOR_NOTE#g" "$LIVY_INTERPRETER_CONF"
+    sed -i "s#{{INTERPRETER_FOR_USER}}#$INTERPRETER_FOR_USER#g" "$LIVY_INTERPRETER_CONF"
     SHIRO_CONF="$ZEPPELIN_CONF_DIR/shiro.ini"
     if [ "$ZEPPELIN_SHIRO_ENABLED" == "false" ]; then
       mv "$SHIRO_CONF" "${SHIRO_CONF}.template"
