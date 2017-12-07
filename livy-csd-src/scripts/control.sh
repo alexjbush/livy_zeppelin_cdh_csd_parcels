@@ -90,7 +90,7 @@ case $1 in
        fi
     fi
     echo "Starting the Livy server"
-    exec env LIVY_SERVER_JAVA_OPTS="-Xms$LIVY_MEMORY -Xmx$LIVY_MEMORY" CLASSPATH=`hadoop classpath` $LIVY_HOME/bin/livy-server
+    exec env LIVY_SERVER_JAVA_OPTS="-Divy.home=${IVY_DATA_DIR} -Xms$LIVY_MEMORY -Xmx$LIVY_MEMORY" CLASSPATH=`hadoop classpath` $LIVY_HOME/bin/livy-server
     ;;
   (*)
     echo "Don't understand [$1]"

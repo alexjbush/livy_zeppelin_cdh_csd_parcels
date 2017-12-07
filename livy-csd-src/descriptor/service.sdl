@@ -85,7 +85,8 @@
           "SSL_ENABLED": "${ssl_enabled}",
           "KEYSTORE_LOCATION": "${ssl_server_keystore_location}",
           "KEYSTORE_PASSWORD": "${ssl_server_keystore_keypassword}",
-          "KEYSTORE_KEYPASSWORD": "${ssl_server_keystore_password}"
+          "KEYSTORE_KEYPASSWORD": "${ssl_server_keystore_password}",
+          "IVY_DATA_DIR": "${ivy_data_dir}"
         }
       },
       "kerberosPrincipals": [
@@ -202,6 +203,18 @@
           "default": false
         },
         {
+          "name": "ivy_data_dir",
+          "label": "Ivy Data Directory",
+          "description": "The location used by Ivy to store Jar dependencies.",
+          "required": "false",
+          "type": "path",
+          "pathType": "localDataDir",
+          "default": "/var/local/livy/ivy",
+          "required": "true",
+          "minLength": 1,
+          "configurableInWizard": true
+        },
+        {
           "name": "livy_server_access_control_users",
           "label": "Access Control Users",
           "description": "List of users allowed to access Livy if Access Control is enabled.",
@@ -229,26 +242,6 @@
           "type": "string_array",
           "default": [
             "zeppelin"
-          ]
-        },
-        {
-          "name": "livy_spark_jars_packages",
-          "label": "Livy Spark Maven Jars",
-          "description": "List of packages to add to the Livy interpreter. The format for the entries should be groupId:artifactId:version.",
-          "configName": "livy.spark.jars.packages",
-          "required": "false",
-          "type": "string_array",
-          "default": []
-        },
-        {
-          "name": "livy_spark_jars",
-          "label": "Livy Spark Jars",
-          "description": "List of HDFS paths of Jars to add to the Livy classpath.",
-          "configName": "livy.spark.jars",
-          "type": "uri_array",
-          "default": [],
-          "allowedSchemes": [
-            "hdfs"
           ]
         }
       ],
@@ -278,8 +271,6 @@
               "livy_spark_deploy_mode",
               "livy_impersonation_enabled",
               "livy_repl_enable_hive_context",
-              "livy_spark_jars_packages",
-              "livy_spark_jars",
               "livy_server_host"
             ]
           }

@@ -80,6 +80,8 @@ case $1 in
         sed -i "s#{{DATA_DIR}}#$ZEPPELIN_DATA_DIR#g" "$LIVY_TEMP_CONF"
         sed -i "s#{{INTERPRETER_NAME}}#$INTERPRETER_NAME#g" "$LIVY_TEMP_CONF"
         sed -i "s#{{INTERPRETER_ID}}#$INTERPRETER_ID#g" "$LIVY_TEMP_CONF"
+        sed -i "s#{{LIVY_SPARK_JARS_PACKAGES}}#$LIVY_SPARK_JARS_PACKAGES#g" "$LIVY_TEMP_CONF"
+        sed -i "s#{{LIVY_SPARK_JARS}}#$LIVY_SPARK_JARS#g" "$LIVY_TEMP_CONF"
         sed -e "/{{SPARK_CONFIG_$SPARK_VERSION}}/ {" -e "r $LIVY_TEMP_CONF" -e 'd' -e '}' -i "$LIVY_INTERPRETER_CONF"
         sed -i "s#{{INTERPRETER_BINDING_$SPARK_VERSION}}#\"$INTERPRETER_ID\",#g" "$LIVY_INTERPRETER_CONF"
       fi

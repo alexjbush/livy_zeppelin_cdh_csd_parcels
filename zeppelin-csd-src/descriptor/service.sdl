@@ -69,7 +69,9 @@
           "ZEPPELIN_TRUSTSTORE": "${ssl_client_truststore_location}",
           "ZEPPELIN_TRUSTSTORE_PASSWORD": "${ssl_client_truststore_password}",
           "ZEPPELIN_SHIRO_ENABLED": "${zeppelin_shiro_enabled}",
-          "ZEPPELIN_DATA_DIR": "${zeppelin_data_dir}"
+          "ZEPPELIN_DATA_DIR": "${zeppelin_data_dir}",
+          "LIVY_SPARK_JARS_PACKAGES": "${livy_spark_jars_packages}",
+          "LIVY_SPARK_JARS": "${livy_spark_jars}"
         }
       },
       "kerberosPrincipals": [
@@ -193,6 +195,24 @@
           "unit": "bytes",
           "min": 67108864,
           "default": 268435456
+        },
+        {
+          "name": "livy_spark_jars_packages",
+          "label": "Livy Spark Maven Jars",
+          "description": "List of packages to add to the Livy interpreter. The format for the entries should be groupId:artifactId:version.",
+          "required": "false",
+          "type": "string_array",
+          "default": []
+        },
+        {
+          "name": "livy_spark_jars",
+          "label": "Livy Spark Jars",
+          "description": "List of HDFS paths of Jars to add to the Livy classpath.",
+          "type": "uri_array",
+          "default": [],
+          "allowedSchemes": [
+            "hdfs"
+          ]
         }
       ],
       "sslServer": {
