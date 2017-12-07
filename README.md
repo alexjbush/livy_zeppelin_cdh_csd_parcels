@@ -10,9 +10,19 @@ This will work in a secure (Kerberos-enabled) environment.
 
 This has been tested on CDH 5.12.1.
 
-## Installation
+## Build and Installation
 
-Information about installed custom services can be found at [https://www.cloudera.com/documentation/enterprise/latest/topics/cm_mc_addon_services.html](https://www.cloudera.com/documentation/enterprise/latest/topics/cm_mc_addon_services.html).
+To build the CSDs and Parcels, you can run the build script:
+
+```
+#Build the Parcel files, this make take some time
+sh build.sh parcel
+
+#Build the CSDs
+sh build.sh csd
+```
+
+Information about installing custom services can be found at [https://www.cloudera.com/documentation/enterprise/latest/topics/cm_mc_addon_services.html](https://www.cloudera.com/documentation/enterprise/latest/topics/cm_mc_addon_services.html).
 
 ## Configuration
 
