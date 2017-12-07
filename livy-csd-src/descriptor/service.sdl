@@ -233,7 +233,7 @@
         },
         {
           "name": "livy_spark_jars_packages",
-          "label": "Extra Python Path",
+          "label": "Livy Spark Maven Jars",
           "description": "List of packages to add to the Livy interpreter. The format for the entries should be groupId:artifactId:version.",
           "configName": "livy.spark.jars.packages",
           "required": "false",
