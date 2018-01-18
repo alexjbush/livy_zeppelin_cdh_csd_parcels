@@ -12,7 +12,10 @@ This has been tested on CDH 5.12.1.
 
 ## Build and Installation
 
-To build the CSDs and Parcels, you can run the build script:
+Attached to the repository releases are prebuilt CSDs and Parcels for both Livy and Zeppelin.
+You might be able to use the Github release URLs as parcel repositories in CM (e.g. `https://github.com/bushnoh/livy_zeppelin_cdh_csd_parcels/releases/download/Livy-0.4.0-v0.1/`) however I have not tested if this works. 
+
+To build the CSDs and Parcels yourself, you can run the build script:
 
 ```
 #Build the Parcel files, this make take some time
