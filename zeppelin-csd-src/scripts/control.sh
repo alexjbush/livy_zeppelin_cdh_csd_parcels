@@ -74,6 +74,9 @@ case $1 in
       else
         LIVY_TEMP_CONF="$ZEPPELIN_CONF_DIR/interpreter.livy.json.$SPARK_VERSION"
         cp "$ZEPPELIN_CONF_DIR/interpreter.livy.json" "$LIVY_TEMP_CONF"
+        sed -i "s#{{EXECUTOR_MEMORY}}#$EXECUTOR_MEMORY#g" "$LIVY_TEMP_CONF"
+        sed -i "s#{{MAX_EXECUTORS}}#$MAX_EXECUTORS#g" "$LIVY_TEMP_CONF"
+        sed -i "s#{{DRIVER_MEMORY}}#$DRIVER_MEMORY#g" "$LIVY_TEMP_CONF"
         sed -i "s#{{LIVY_URL}}#$LIVY_URL#g" "$LIVY_TEMP_CONF"
         sed -i "s#{{LIVY_PRINCIPAL}}#$ZEPPELIN_PRINCIPAL#g" "$LIVY_TEMP_CONF"
         sed -i "s#{{LIVY_KEYTAB}}#zeppelin.keytab#g" "$LIVY_TEMP_CONF"
@@ -94,6 +97,8 @@ case $1 in
     if [ "$ZEPPELIN_SHIRO_ENABLED" == "false" ]; then
       mv "$SHIRO_CONF" "${SHIRO_CONF}.template"
     fi
+    #Add link to interpreter permissions so it is maintained between restarts
+    ln -s "${ZEPPELIN_DATA_DIR}/notebook-authorization.json" "${ZEPPELIN_CONF_DIR}/notebook-authorization.json"
 
     log "Starting the Zeppelin server"
     exec env ZEPPELIN_JAVA_OPTS="-Xms$ZEPPELIN_MEMORY -Xmx$ZEPPELIN_MEMORY" $ZEPPELIN_HOME/bin/zeppelin.sh
