@@ -5,6 +5,7 @@
       "properties": {
         "zeppelin.livy.pull_status.interval.millis": "1000",
         "livy.spark.executor.memory": "{{EXECUTOR_MEMORY}}",
+        "livy.spark.executor.extraJavaOptions": "{{EXECUTOR_EXTRA_OPTIONS}}",
         "zeppelin.livy.session.create_timeout": "120",
         "zeppelin.livy.principal": "{{LIVY_PRINCIPAL}}",
         "zeppelin.livy.spark.sql.maxResult": "1000",

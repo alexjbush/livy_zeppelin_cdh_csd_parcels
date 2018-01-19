@@ -63,6 +63,7 @@
         "environmentVariables": {
           "DRIVER_MEMORY": "${driver_memory}",
           "EXECUTOR_MEMORY": "${executor_memory}",
+          "EXECUTOR_EXTRA_OPTIONS": "${executor_extra_options}",
           "MAX_EXECUTORS": "${max_executors}",
           "ZEPPELIN_LOG_DIR": "${log_dir}",
           "INTERPRETER_FOR_NOTE": "${interpreter_for_note}",
@@ -144,6 +145,14 @@
           "name": "max_executors",
           "label": "Max Spark Executors",
           "description": "Upper bound for the number of executors (per interpreter instance).",
+          "required": "false",
+          "type": "string",
+          "default": ""
+        },
+        {
+          "name": "executor_extra_options",
+          "label": "Spark Executor Extra Java Options",
+          "description": "A string of extra JVM options to pass to executors. For instance, GC settings or other logging.",
           "required": "false",
           "type": "string",
           "default": ""

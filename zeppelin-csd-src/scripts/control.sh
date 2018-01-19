@@ -75,6 +75,7 @@ case $1 in
         LIVY_TEMP_CONF="$ZEPPELIN_CONF_DIR/interpreter.livy.json.$SPARK_VERSION"
         cp "$ZEPPELIN_CONF_DIR/interpreter.livy.json" "$LIVY_TEMP_CONF"
         sed -i "s#{{EXECUTOR_MEMORY}}#$EXECUTOR_MEMORY#g" "$LIVY_TEMP_CONF"
+        sed -i "s#{{EXECUTOR_EXTRA_OPTIONS}}#$EXECUTOR_EXTRA_OPTIONS#g" "$LIVY_TEMP_CONF"
         sed -i "s#{{MAX_EXECUTORS}}#$MAX_EXECUTORS#g" "$LIVY_TEMP_CONF"
         sed -i "s#{{DRIVER_MEMORY}}#$DRIVER_MEMORY#g" "$LIVY_TEMP_CONF"
         sed -i "s#{{LIVY_URL}}#$LIVY_URL#g" "$LIVY_TEMP_CONF"
