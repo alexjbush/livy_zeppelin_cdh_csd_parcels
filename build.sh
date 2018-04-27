@@ -3,9 +3,9 @@ set -x
 set -e
 
 CM_EXT_BRANCH=cm5-5.12.0
-LIVY_URL=http://apache.mirror.anlx.net/incubator/livy/0.4.0-incubating/livy-0.4.0-incubating-bin.zip
-LIVY_MD5="0818685b9bc196de2bef9f0dd0e008b3"
-LIVY_VERSION=0.4.0
+LIVY_URL=http://apache.mirror.anlx.net/incubator/livy/0.5.0-incubating/livy-0.5.0-incubating-bin.zip
+LIVY_MD5="cc9dc5518e8c178808707eaa68b7672a"
+LIVY_VERSION=0.5.0
 
 ZEPPELIN_URL=http://apache.mirror.anlx.net/zeppelin/zeppelin-0.7.3/zeppelin-0.7.3-bin-all.tgz
 ZEPPELIN_MD5="6f84f5581f59838b632a75071a2157cc"
@@ -144,11 +144,11 @@ clean)
 parcel)
   build_cm_ext
   build_livy_parcel
-  build_zeppelin_parcel
+#  build_zeppelin_parcel
   ;;
 csd)
   build_livy_csd
-  build_zeppelin_csd
+#  build_zeppelin_csd
   ;;
 *)
   echo "Usage: $0 [parcel|csd|clean]"
