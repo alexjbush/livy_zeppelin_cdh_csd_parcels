@@ -148,7 +148,7 @@ parcel)
   ;;
 csd)
   build_livy_csd
-#  build_zeppelin_csd
+  build_zeppelin_csd
   ;;
 *)
   echo "Usage: $0 [parcel|csd|clean]"

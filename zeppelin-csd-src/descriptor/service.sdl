@@ -2,7 +2,7 @@
   "name": "ZEPPELIN",
   "label": "ZEPPELIN",
   "description": "Apache Zeppelin is a web-based notebook that enables interactive data analytics. You can make beautiful data-driven, interactive and collaborative documents with SQL, Scala and more.",
-  "version": "0.7.3",
+  "version": "0.8.0",
   "compatibility": {
     "cdhVersion": {
       "min": "5.11.0"
@@ -61,21 +61,17 @@
           "start"
         ],
         "environmentVariables": {
-          "DRIVER_MEMORY": "${driver_memory}",
-          "EXECUTOR_MEMORY": "${executor_memory}",
-          "EXECUTOR_EXTRA_OPTIONS": "${executor_extra_options}",
-          "MAX_EXECUTORS": "${max_executors}",
           "ZEPPELIN_LOG_DIR": "${log_dir}",
           "INTERPRETER_FOR_NOTE": "${interpreter_for_note}",
           "INTERPRETER_FOR_USER": "${interpreter_for_user}",
           "ZEPPELIN_MEMORY": "${zeppelin_max_heapsize}",
-          "ZEPPELIN_INTERPRETER_LIST": "${zeppelin_interpreter_list}",
           "ZEPPELIN_TRUSTSTORE": "${ssl_client_truststore_location}",
-          "ZEPPELIN_TRUSTSTORE_PASSWORD": "${ssl_client_truststore_password}",
           "ZEPPELIN_SHIRO_ENABLED": "${zeppelin_shiro_enabled}",
           "ZEPPELIN_DATA_DIR": "${zeppelin_data_dir}",
-          "LIVY_SPARK_JARS_PACKAGES": "${livy_spark_jars_packages}",
-          "LIVY_SPARK_JARS": "${livy_spark_jars}"
+          "ZEPPELIN_CONF_DIR": "${zeppelin_conf_dir}",
+          "ZEPPELIN_NOTEBOOK_DIR": "${zeppelin_notebook_dir}",
+          "ZEPPELIN_EXTRA_JAVA_OPTIONS": "$zeppelin_java_options",
+          "HADOOP_EXTRA_OPTIONS": "$hadoop_options"
         }
       },
       "kerberosPrincipals": [
@@ -126,9 +122,26 @@
           "default": true
         },
         {
+          "name": "zeppelin_java_options",
+          "label": "Zeppelin Java Options",
+          "description": "Extra java options given as ZEPPELIN_JAVA_OPTS.",
+          "required": "false",
+          "type": "string",
+          "default": true
+        },
+        {
+          "name": "hadoop_options",
+          "label": "Hadoop Options",
+          "description": "Extra java options given as HADOOP_OPTS.",
+          "required": "false",
+          "type": "string",
+          "default": true
+        },
+        {
           "name": "executor_memory",
           "label": "Spark Executor Memory",
           "description": "Executor memory per worker instance. ex) 512m, 32g.",
+          "configName": "livy.spark.executor.memory",
           "required": "false",
           "type": "string",
           "default": "4g"
@@ -137,6 +150,7 @@
           "name": "driver_memory",
           "label": "Spark Driver Memory",
           "description": "Driver memory. ex) 512m, 32g.",
+          "configName": "livy.spark.driver.memory",
           "required": "false",
           "type": "string",
           "default": "4g"
@@ -145,6 +159,7 @@
           "name": "max_executors",
           "label": "Max Spark Executors",
           "description": "Upper bound for the number of executors (per interpreter instance).",
+          "configName": "livy.spark.dynamicAllocation.maxExecutors",
           "required": "false",
           "type": "string",
           "default": ""
@@ -153,6 +168,7 @@
           "name": "executor_extra_options",
           "label": "Spark Executor Extra Java Options",
           "description": "A string of extra JVM options to pass to executors. For instance, GC settings or other logging.",
+          "configName": "livy.spark.executor.extraJavaOptions",
           "required": "false",
           "type": "string",
           "default": ""
@@ -173,18 +189,6 @@
           "required": "false",
           "type": "boolean",
           "default": false
-        },
-        {
-          "name": "zeppelin_interpreter_list",
-          "label": "Zeppelin Interpreter List",
-          "description": "List of Zeppelin interpreters to enable. Allowed values are: alluxio, angular, beam, bigquery, cassandra, elasticsearch, file, flink, hbase, ignite, jdbc, kylin, lens, livy, md, pig, postgresql, python, scio, shell.",
-          "required": "false",
-          "type": "string_array",
-          "separator": " ",
-          "default": [
-            "livy",
-            "md"
-          ]
         },
         {
           "name": "interpreter_for_note",
@@ -213,11 +217,48 @@
         {
           "name": "zeppelin_data_dir",
           "label": "Zeppelin Data Directory",
-          "description": "The root data directory where the notebook and jetty temporary directories are stored.",
-          "required": "false",
+          "description": "The root data directory where the Zeppelin temporary directories are stored.",
           "type": "path",
           "pathType": "localDataDir",
           "default": "/var/local/zeppelin/data",
+          "required": "true",
+          "minLength": 1,
+          "configurableInWizard": true
+        },
+        {
+          "name": "zeppelin_conf_dir",
+          "label": "Zeppelin Conf Directory",
+          "description": "The configuration directory where Zeppelin stores the interpreter.json, notebook-authorization.json and credential.json files.",
+          "type": "uri",
+          "configName": "zeppelin.config.fs.dir",
+          "allowedSchemes": [
+            "hdfs",
+            "adl",
+            "file",
+            "s3a",
+            "wasbs",
+            "wasb"
+          ],
+          "default": "file:///var/local/zeppelin/conf",
+          "required": "true",
+          "minLength": 1,
+          "configurableInWizard": true
+        },
+        {
+          "name": "zeppelin_notebook_dir",
+          "label": "Zeppelin Notebook Directory",
+          "description": "The root data directory where the notebooks are stored.",
+          "configName": "zeppelin.notebook.dir",
+          "allowedSchemes": [
+            "hdfs",
+            "adl",
+            "file",
+            "s3a",
+            "wasbs",
+            "wasb"
+          ],
+          "default": "file:///var/local/zeppelin/data/notebook",
+          "type": "uri",
           "required": "true",
           "minLength": 1,
           "configurableInWizard": true
@@ -236,6 +277,7 @@
           "name": "livy_spark_jars_packages",
           "label": "Livy Spark Maven Jars",
           "description": "List of packages to add to the Livy interpreter. The format for the entries should be groupId:artifactId:version.",
+          "configName": "livy.spark.jars.packages",
           "required": "false",
           "type": "string_array",
           "default": []
@@ -244,10 +286,16 @@
           "name": "livy_spark_jars",
           "label": "Livy Spark Jars",
           "description": "List of HDFS paths of Jars to add to the Livy classpath.",
+          "configName": "livy.spark.jars",
           "type": "uri_array",
           "default": [],
           "allowedSchemes": [
-            "hdfs"
+            "hdfs",
+            "adl",
+            "file",
+            "s3a",
+            "wasbs",
+            "wasb"
           ]
         }
       ],
@@ -281,6 +329,8 @@
               "zeppelin_server_ssl_port",
               "zeppelin_anonymous_allowed",
               "zeppelin_notebook_public",
+              "zeppelin_notebook_dir",
+              "zeppelin_conf_dir",
               "ssl_enabled",
               "ssl_server_keystore_location",
               "ssl_server_keystore_password",
@@ -301,17 +351,33 @@
                 "value" : "${zeppelin_data_dir}/webapps"
               },
               {
-                "key" : "zeppelin.notebook.dir",
-                "value" : "${zeppelin_data_dir}/notebook"
-              },
-              {
                 "key" : "zeppelin.dep.localrepo",
                 "value" : "${zeppelin_data_dir}/local-repo"
               },
               {
                 "key" : "zeppelin.interpreter.localRepo",
                 "value" : "${zeppelin_data_dir}/local-repo"
+              },
+              {
+                "key" : "zeppelin.notebook.storage",
+                "value" : "org.apache.zeppelin.notebook.repo.FileSystemNotebookRepo"
+              },
+              {
+                "key" : "zeppelin.config.storage.class",
+                "value" : "org.apache.zeppelin.storage.FileSystemConfigStorage"
               }
+            ]
+          },
+          {
+            "filename": "zeppelin-conf/livy.properties",
+            "configFormat": "properties",
+            "includedParams": [
+              "executor_memory",
+              "driver_memory",
+              "max_executors",
+              "executor_extra_options",
+              "livy_spark_jars_packages",
+              "livy_spark_jars"
             ]
           }
         ],
