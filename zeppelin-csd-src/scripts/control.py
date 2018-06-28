@@ -76,7 +76,7 @@ def generate_livy_conf_struct(spark_version, interpreter_id, interpreter_name, l
         os.environ("ZEPPELIN_DATA_DIR"), interpreter_id)
     if "ZEPPELIN_PRINCIPAL" in os.environ.keys():
         conf["properties"]["zeppelin.livy.principal"] = os.environ("ZEPPELIN_PRINCIPAL")
-        conf["properties"]["zeppelin.livy.keytab"] = "zeppelin.keytab"
+        conf["properties"]["zeppelin.livy.keytab"] = "%SERVICENAMELOWER%.keytab"
     props = properties_string_to_dict(interpreter_properties_string)
     for k, v in props.iteritems():
         conf["properties"][k] = v

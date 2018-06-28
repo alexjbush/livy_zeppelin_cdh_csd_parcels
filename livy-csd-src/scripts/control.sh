@@ -76,12 +76,12 @@ case $1 in
     fi
     if [ "$LIVY_PRINCIPAL" != "" ]; then
        echo "livy.server.launch.kerberos.principal=$LIVY_PRINCIPAL" >> "$CONF_FILE"
-       echo "livy.server.launch.kerberos.keytab=livy.keytab" >> "$CONF_FILE"
+       echo "livy.server.launch.kerberos.keytab=%SERVICENAMELOWER%.keytab" >> "$CONF_FILE"
        #SPNEGO config
        if [ "$ENABLE_SPNEGO" = "true" ] && [ -n "$SPNEGO_PRINCIPAL" ]; then
          echo "livy.server.auth.type=kerberos" >> "$CONF_FILE"
          echo "livy.server.auth.kerberos.principal=$SPNEGO_PRINCIPAL" >> "$CONF_FILE"
-         echo "livy.server.auth.kerberos.keytab=livy.keytab" >> "$CONF_FILE"
+         echo "livy.server.auth.kerberos.keytab=%SERVICENAMELOWER%.keytab" >> "$CONF_FILE"
          echo "livy.superusers=$LIVY_SUPERUSERS" >> "$CONF_FILE"
          if [ "$ENABLE_ACCESS_CONTROL" == "true" ]; then
            echo "livy.server.access-control.enabled=true" >> "$CONF_FILE"
