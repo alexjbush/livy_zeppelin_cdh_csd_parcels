@@ -84,8 +84,8 @@
           "LIVY_SPARK_VERSION": "${livy_spark_version}",
           "SSL_ENABLED": "${ssl_enabled}",
           "KEYSTORE_LOCATION": "${ssl_server_keystore_location}",
-          "KEYSTORE_PASSWORD": "${ssl_server_keystore_keypassword}",
-          "KEYSTORE_KEYPASSWORD": "${ssl_server_keystore_password}",
+          "KEYSTORE_PASSWORD": "${ssl_server_keystore_password}",
+          "KEYSTORE_KEYPASSWORD": "${ssl_server_keystore_keypassword}",
           "IVY_DATA_DIR": "${ivy_data_dir}"
         }
       },
