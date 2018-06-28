@@ -1,6 +1,6 @@
 {
-  "name": "ZEPPELIN",
-  "label": "ZEPPELIN",
+  "name": "%SERVICENAME%",
+  "label": "%SERVICENAME%",
   "description": "Apache Zeppelin is a web-based notebook that enables interactive data analytics. You can make beautiful data-driven, interactive and collaborative documents with SQL, Scala and more.",
   "version": "0.8.0",
   "compatibility": {
@@ -17,8 +17,8 @@
   "icon": "images/icon.png",
   "parcel": {
     "requiredTags": [
-      "zeppelin",
-      "livy"
+      "%SERVICENAMELOWER%",
+      "%LIVYSERVICENAMELOWER%"
     ],
     "optionalTags": [
       "zeppelin-plugin"
@@ -26,7 +26,7 @@
   },
   "serviceDependencies": [
     {
-      "name": "LIVY",
+      "name": "%LIVYSERVICENAME%",
       "required": "true"
     }
   ],
@@ -48,10 +48,10 @@
     ]
   },
   "parameters": [],
-  "rolesWithExternalLinks" : ["ZEPPELIN_SERVER"],
+  "rolesWithExternalLinks" : ["%SERVICENAME%_SERVER"],
   "roles": [
     {
-      "name": "ZEPPELIN_SERVER",
+      "name": "%SERVICENAME%_SERVER",
       "label": "Zeppelin Server",
       "pluralLabel": "Zeppelin Servers",
       "jvmBased": true,
@@ -87,9 +87,9 @@
         "maxInstances": 1
       },
       "logging": {
-        "configFilename": "zeppelin-conf/log4j.properties",
-        "dir": "/var/log/zeppelin",
-        "filename": "zeppelin-server-${host}.log",
+        "configFilename": "%SERVICENAMELOWER%-conf/log4j.properties",
+        "dir": "/var/log/%SERVICENAMELOWER%",
+        "filename": "%SERVICENAMELOWER%-server-${host}.log",
         "modifiable": true,
         "loggingType": "log4j"
       },
@@ -220,7 +220,7 @@
           "description": "The root data directory where the Zeppelin temporary directories are stored.",
           "type": "path",
           "pathType": "localDataDir",
-          "default": "/var/local/zeppelin/data",
+          "default": "/var/local/%SERVICENAMELOWER%/data",
           "required": "true",
           "minLength": 1,
           "configurableInWizard": true
@@ -239,7 +239,7 @@
             "wasbs",
             "wasb"
           ],
-          "default": "file:///var/local/zeppelin/conf",
+          "default": "file:///var/local/%SERVICENAMELOWER%/conf",
           "required": "true",
           "minLength": 1,
           "configurableInWizard": true
@@ -257,7 +257,7 @@
             "wasbs",
             "wasb"
           ],
-          "default": "file:///var/local/zeppelin/data/notebook",
+          "default": "file:///var/local/%SERVICENAMELOWER%/data/notebook",
           "type": "uri",
           "required": "true",
           "minLength": 1,
@@ -322,7 +322,7 @@
       "configWriter": {
         "generators": [
           {
-            "filename": "zeppelin-conf/zeppelin-site.xml",
+            "filename": "%SERVICENAMELOWER%-conf/zeppelin-site.xml",
             "configFormat": "hadoop_xml",
             "includedParams": [
               "zeppelin_server_port",
@@ -369,7 +369,7 @@
             ]
           },
           {
-            "filename": "zeppelin-conf/livy.properties",
+            "filename": "%SERVICENAMELOWER%-conf/livy.properties",
             "configFormat": "properties",
             "includedParams": [
               "executor_memory",
@@ -383,19 +383,19 @@
         ],
         "auxConfigGenerators": [
           {
-            "filename": "zeppelin-conf/zeppelin-env.sh",
+            "filename": "%SERVICENAMELOWER%-conf/zeppelin-env.sh",
             "sourceFilename": "aux/client/zeppelin-env.sh"
           },
           {
-            "filename": "zeppelin-conf/shiro.ini",
+            "filename": "%SERVICENAMELOWER%-conf/shiro.ini",
             "sourceFilename": "aux/client/shiro.ini"
           },
           {
-            "filename": "zeppelin-conf/interpreter.livy.json",
+            "filename": "%SERVICENAMELOWER%-conf/interpreter.livy.json",
             "sourceFilename": "aux/client/interpreter.livy.json"
           },
           {
-            "filename": "zeppelin-conf/interpreter.json",
+            "filename": "%SERVICENAMELOWER%-conf/interpreter.json",
             "sourceFilename": "aux/client/interpreter.json"
           }
         ]

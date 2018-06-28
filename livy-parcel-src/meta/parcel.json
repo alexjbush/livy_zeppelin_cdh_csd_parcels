@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "name": "LIVY",
+  "name": "%SERVICENAME%",
   "version": "%VERSION%",
   "setActiveSymlink": true,
 
   "provides": [
-    "livy"
+    "%SERVICENAMELOWER%"
   ],
 
   "depends": "CDH",

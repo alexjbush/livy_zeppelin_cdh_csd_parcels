@@ -7,22 +7,27 @@ LIVY_URL=http://apache.mirror.anlx.net/incubator/livy/0.5.0-incubating/livy-0.5.
 LIVY_MD5="cc9dc5518e8c178808707eaa68b7672a"
 LIVY_VERSION=0.5.0
 
-ZEPPELIN_URL=http://apache.mirror.anlx.net/zeppelin/zeppelin-0.7.3/zeppelin-0.7.3-bin-all.tgz
-ZEPPELIN_MD5="6f84f5581f59838b632a75071a2157cc"
-ZEPPELIN_VERSION=0.7.3
+ZEPPELIN_URL=http://apache.mirror.anlx.net/zeppelin/zeppelin-0.8.0/zeppelin-0.8.0-bin-all.tgz
+ZEPPELIN_MD5="d87a285c0640ed02ad74bea219525364"
+ZEPPELIN_VERSION=0.8.0
 
-
+livy_service_name="LIVYBETA"
+livy_service_name_lower="$( echo livy_service_name | tr '[:upper:]' '[:lower:]' )"
 livy_archive="$( basename $LIVY_URL )"
 livy_folder="$( basename $livy_archive .zip )"
-livy_parcel_folder="LIVY-${LIVY_VERSION}"
+livy_parcel_folder="${livy_service_name}-${LIVY_VERSION}"
 livy_parcel_name="$livy_parcel_folder-el7.parcel"
 livy_built_folder="${livy_parcel_folder}_build"
+livy_csd_build_folder="livy_csd_build"
 
+zeppelin_service_name="ZEPPELINBETA"
+zeppelin_service_name_lower="$( echo zeppelin_service_name | tr '[:upper:]' '[:lower:]' )"
 zeppelin_archive="$( basename $ZEPPELIN_URL )"
 zeppelin_folder="$( basename $zeppelin_archive .tgz )"
-zeppelin_parcel_folder="ZEPPELIN-${ZEPPELIN_VERSION}"
+zeppelin_parcel_folder="${zeppelin_service_name}-${ZEPPELIN_VERSION}"
 zeppelin_parcel_name="$zeppelin_parcel_folder-el7.parcel"
 zeppelin_built_folder="${zeppelin_parcel_folder}_build"
+zeppelin_csd_build_folder="zeppelin_csd_build"
 
 function build_cm_ext {
 
@@ -76,6 +81,8 @@ function build_livy_parcel {
   fi
   cp -r livy-parcel-src/meta $livy_parcel_folder
   sed -i -e "s/%VERSION%/$LIVY_VERSION/" ./$livy_parcel_folder/meta/parcel.json
+  sed -i -e "s/%SERVICENAME%/$livy_service_name/" ./$livy_parcel_folder/meta/parcel.json
+  sed -i -e "s/%SERVICENAMELOWER%/$livy_service_name_lower/" ./$livy_parcel_folder/meta/parcel.json
   java -jar cm_ext/validator/target/validator.jar -d ./$livy_parcel_folder
   mkdir -p $livy_built_folder
   tar zcvhf ./$livy_built_folder/$livy_parcel_name $livy_parcel_folder --owner=root --group=root
@@ -93,6 +100,9 @@ function build_zeppelin_parcel {
   fi
   cp -r zeppelin-parcel-src/meta $zeppelin_parcel_folder
   sed -i -e "s/%VERSION%/$ZEPPELIN_VERSION/" ./$zeppelin_parcel_folder/meta/parcel.json
+  sed -i -e "s/%SERVICENAME%/$zeppelin_service_name/" ./$zeppelin_parcel_folder/meta/parcel.json
+  sed -i -e "s/%SERVICENAMELOWER%/$zeppelin_service_name_lower/" ./$zeppelin_parcel_folder/meta/parcel.json
+  sed -i -e "s/%LIVYSERVICENAME%/$livy_service_name/" ./$zeppelin_parcel_folder/meta/parcel.json
   java -jar cm_ext/validator/target/validator.jar -d ./$zeppelin_parcel_folder
   mkdir -p $zeppelin_built_folder
   tar zcvhf ./$zeppelin_built_folder/$zeppelin_parcel_name $zeppelin_parcel_folder --owner=root --group=root
@@ -101,56 +111,49 @@ function build_zeppelin_parcel {
 }
 
 function build_livy_csd {
-  JARNAME=LIVY-${LIVY_VERSION}.jar
+  JARNAME=${livy_service_name}-${LIVY_VERSION}.jar
   if [ -f "$JARNAME" ]; then
     return
   fi
-  java -jar cm_ext/validator/target/validator.jar -s ./livy-csd-src/descriptor/service.sdl -l "SPARK_ON_YARN SPARK2_ON_YARN"
+  rm -rf ${livy_csd_build_folder}
+  cp -rf ./livy-csd-src ${livy_csd_build_folder}
+  sed -i -e "s/%SERVICENAME%/$livy_service_name/" ${livy_csd_build_folder}/descriptor/service.sdl
+  sed -i -e "s/%SERVICENAMELOWER%/$livy_service_name_lower/" ${livy_csd_build_folder}/descriptor/service.sdl
+  sed -i -e "s/%SERVICENAMELOWER%/$livy_service_name_lower/" ${livy_csd_build_folder}/scripts/control.sh
+  java -jar cm_ext/validator/target/validator.jar -s ${livy_csd_build_folder}/descriptor/service.sdl -l "SPARK_ON_YARN SPARK2_ON_YARN"
 
-  jar -cvf ./$JARNAME -C ./livy-csd-src .
+  jar -cvf ./$JARNAME -C ${livy_csd_build_folder} .
 }
 
 function build_zeppelin_csd {
-  JARNAME=ZEPPELIN-${ZEPPELIN_VERSION}.jar
+  JARNAME=${zeppelin_service_name}-${ZEPPELIN_VERSION}.jar
   if [ -f "$JARNAME" ]; then
     return
   fi
-  java -jar cm_ext/validator/target/validator.jar -s ./zeppelin-csd-src/descriptor/service.sdl -l "LIVY"
+  rm -rf ${zeppelin_csd_build_folder}
+  cp -rf ./zeppelin-csd-src ${zeppelin_csd_build_folder}
+  sed -i -e "s/%SERVICENAME%/$zeppelin_service_name/" ${zeppelin_csd_build_folder}/descriptor/service.sdl
+  sed -i -e "s/%SERVICENAMELOWER%/$zeppelin_service_name_lower/" ${zeppelin_csd_build_folder}/descriptor/service.sdl
+  sed -i -e "s/%LIVYSERVICENAME%/$livy_service_name/" ${zeppelin_csd_build_folder}/descriptor/service.sdl
+  sed -i -e "s/%LIVYSERVICENAMELOWER%/$livy_service_name_lower/" ${zeppelin_csd_build_folder}/descriptor/service.sdl
+  sed -i -e "s/%SERVICENAMELOWER%/$zeppelin_service_name_lower/" ${zeppelin_csd_build_folder}/scripts/control.py
+  sed -i -e "s/%LIVYSERVICENAMELOWER%/$livy_service_name_lower/" ${zeppelin_csd_build_folder}/scripts/control.py
+  java -jar cm_ext/validator/target/validator.jar -s ${zeppelin_csd_build_folder}/descriptor/service.sdl -l "${livy_service_name}"
 
-  jar -cvf ./$JARNAME -C ./zeppelin-csd-src .
+  jar -cvf ./$JARNAME -C ${zeppelin_csd_build_folder} .
 }
 
 case $1 in
-clean)
-  if [ -d cm_ext ]; then
-    rm -rf cm_ext
-  fi
-  if [ -d $livy_folder ]; then
-    rm -rf $livy_folder
-  fi
-  if [ -f $livy_archive ]; then
-    rm -rf $livy_archive
-  fi
-  if [ -d $livy_parcel_folder ]; then
-    rm -rf $livy_parcel_folder
-  fi
-  if [ -d $livy_built_folder ]; then
-    rm -rf $livy_built_folder
-  fi
-  if [ -f "LIVY-${LIVY_VERSION}.jar" ]; then
-    rm -rf "LIVY-${LIVY_VERSION}.jar"
-  fi
-  ;;
 parcel)
   build_cm_ext
   build_livy_parcel
-#  build_zeppelin_parcel
+  build_zeppelin_parcel
   ;;
 csd)
   build_livy_csd
   build_zeppelin_csd
   ;;
 *)
-  echo "Usage: $0 [parcel|csd|clean]"
+  echo "Usage: $0 [parcel|csd]"
   ;;
 esac

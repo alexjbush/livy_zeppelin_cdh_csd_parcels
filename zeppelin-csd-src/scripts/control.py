@@ -123,10 +123,10 @@ def start():
 
     # Check and set various conf directories
     base_conf_dir = os.environ["CONF_DIR"]
-    zeppelin_conf_dir = "%s/zeppelin-conf" % base_conf_dir
+    zeppelin_conf_dir = "%s/%SERVICENAMELOWER%-conf" % base_conf_dir
     error_if_missing(zeppelin_conf_dir)
     os.environ["ZEPPELIN_CONF_DIR"] = zeppelin_conf_dir
-    livy_conf_dir = "%s/livy-conf" % base_conf_dir
+    livy_conf_dir = "%s/%LIVYSERVICENAMELOWER%-conf" % base_conf_dir
     error_if_missing(livy_conf_dir)
     livy_conf_file = "%s/server.properties" % livy_conf_dir
     error_if_missing(livy_conf_file)

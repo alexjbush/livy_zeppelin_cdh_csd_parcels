@@ -57,9 +57,9 @@ case $1 in
     fi
     # Copy hive-site to hadoop dir
     # Set Livy conf
-    export LIVY_CONF_DIR="$CONF_DIR/livy-conf"
+    export LIVY_CONF_DIR="$CONF_DIR/%SERVICENAMELOWER%-conf"
     if [ ! -d "$LIVY_CONF_DIR" ]; then
-      log "Could not find livy-conf directory at $LIVY_CONF_DIR"
+      log "Could not find %SERVICENAMELOWER%-conf directory at $LIVY_CONF_DIR"
       exit 3
     fi
     # Update Livy conf for Kerberos and ssl
