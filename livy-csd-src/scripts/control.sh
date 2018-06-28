@@ -72,7 +72,7 @@ case $1 in
     if [ "$SSL_ENABLED" == "true" ]; then
        echo "livy.keystore=$KEYSTORE_LOCATION" >> "$CONF_FILE"
        echo "livy.keystore.password=$KEYSTORE_PASSWORD" >> "$CONF_FILE"
-       echo "livy.keystore.keypassword=$KEYSTORE_KEYPASSWORD" >> "$CONF_FILE"
+       echo "livy.key-password=$KEYSTORE_KEYPASSWORD" >> "$CONF_FILE"
     fi
     if [ "$LIVY_PRINCIPAL" != "" ]; then
        echo "livy.server.launch.kerberos.principal=$LIVY_PRINCIPAL" >> "$CONF_FILE"
