@@ -56,7 +56,7 @@
       "pluralLabel": "Zeppelin Servers",
       "jvmBased": true,
       "startRunner": {
-        "program": "scripts/control.sh",
+        "program": "scripts/control.py",
         "args": [
           "start"
         ],
@@ -68,10 +68,31 @@
           "ZEPPELIN_TRUSTSTORE": "${ssl_client_truststore_location}",
           "ZEPPELIN_SHIRO_ENABLED": "${zeppelin_shiro_enabled}",
           "ZEPPELIN_DATA_DIR": "${zeppelin_data_dir}",
-          "ZEPPELIN_CONF_DIR": "${zeppelin_conf_dir}",
+          "ZEPPELIN_CONF_FS_DIR": "${zeppelin_conf_dir}",
           "ZEPPELIN_NOTEBOOK_DIR": "${zeppelin_notebook_dir}",
-          "ZEPPELIN_EXTRA_JAVA_OPTIONS": "$zeppelin_java_options",
-          "HADOOP_EXTRA_OPTIONS": "$hadoop_options"
+          "ZEPPELIN_EXTRA_JAVA_OPTIONS": "${zeppelin_java_options}",
+          "HADOOP_EXTRA_OPTIONS": "${hadoop_options}"
+        }
+      },
+      "stopRunner": {
+        "runner" : {
+          "program": "scripts/control.py",
+          "args": [
+            "stop"
+          ],
+          "environmentVariables": {
+            "ZEPPELIN_LOG_DIR": "${log_dir}",
+            "INTERPRETER_FOR_NOTE": "${interpreter_for_note}",
+            "INTERPRETER_FOR_USER": "${interpreter_for_user}",
+            "ZEPPELIN_MEMORY": "${zeppelin_max_heapsize}",
+            "ZEPPELIN_TRUSTSTORE": "${ssl_client_truststore_location}",
+            "ZEPPELIN_SHIRO_ENABLED": "${zeppelin_shiro_enabled}",
+            "ZEPPELIN_DATA_DIR": "${zeppelin_data_dir}",
+            "ZEPPELIN_CONF_FS_DIR": "${zeppelin_conf_dir}",
+            "ZEPPELIN_NOTEBOOK_DIR": "${zeppelin_notebook_dir}",
+            "ZEPPELIN_EXTRA_JAVA_OPTIONS": "${zeppelin_java_options}",
+            "HADOOP_EXTRA_OPTIONS": "${hadoop_options}"
+          }
         }
       },
       "kerberosPrincipals": [
@@ -126,16 +147,14 @@
           "label": "Zeppelin Java Options",
           "description": "Extra java options given as ZEPPELIN_JAVA_OPTS.",
           "required": "false",
-          "type": "string",
-          "default": true
+          "type": "string"
         },
         {
           "name": "hadoop_options",
           "label": "Hadoop Options",
           "description": "Extra java options given as HADOOP_OPTS.",
           "required": "false",
-          "type": "string",
-          "default": true
+          "type": "string"
         },
         {
           "name": "executor_memory",
@@ -233,6 +252,7 @@
           "configName": "zeppelin.config.fs.dir",
           "allowedSchemes": [
             "hdfs",
+            "abfs",
             "adl",
             "file",
             "s3a",
@@ -251,6 +271,7 @@
           "configName": "zeppelin.notebook.dir",
           "allowedSchemes": [
             "hdfs",
+            "abfs",
             "adl",
             "file",
             "s3a",
