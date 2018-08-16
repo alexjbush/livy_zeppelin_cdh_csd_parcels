@@ -57,9 +57,9 @@ case $1 in
     fi
     # Copy hive-site to hadoop dir
     # Set Livy conf
-    export LIVY_CONF_DIR="$CONF_DIR/livy-conf"
+    export LIVY_CONF_DIR="$CONF_DIR/%SERVICENAMELOWER%-conf"
     if [ ! -d "$LIVY_CONF_DIR" ]; then
-      log "Could not find livy-conf directory at $LIVY_CONF_DIR"
+      log "Could not find %SERVICENAMELOWER%-conf directory at $LIVY_CONF_DIR"
       exit 3
     fi
     # Update Livy conf for Kerberos and ssl
@@ -72,16 +72,16 @@ case $1 in
     if [ "$SSL_ENABLED" == "true" ]; then
        echo "livy.keystore=$KEYSTORE_LOCATION" >> "$CONF_FILE"
        echo "livy.keystore.password=$KEYSTORE_PASSWORD" >> "$CONF_FILE"
-       echo "livy.keystore.keypassword=$KEYSTORE_KEYPASSWORD" >> "$CONF_FILE"
+       echo "livy.key-password=$KEYSTORE_KEYPASSWORD" >> "$CONF_FILE"
     fi
     if [ "$LIVY_PRINCIPAL" != "" ]; then
        echo "livy.server.launch.kerberos.principal=$LIVY_PRINCIPAL" >> "$CONF_FILE"
-       echo "livy.server.launch.kerberos.keytab=livy.keytab" >> "$CONF_FILE"
+       echo "livy.server.launch.kerberos.keytab=%SERVICENAMELOWER%.keytab" >> "$CONF_FILE"
        #SPNEGO config
        if [ "$ENABLE_SPNEGO" = "true" ] && [ -n "$SPNEGO_PRINCIPAL" ]; then
          echo "livy.server.auth.type=kerberos" >> "$CONF_FILE"
          echo "livy.server.auth.kerberos.principal=$SPNEGO_PRINCIPAL" >> "$CONF_FILE"
-         echo "livy.server.auth.kerberos.keytab=livy.keytab" >> "$CONF_FILE"
+         echo "livy.server.auth.kerberos.keytab=%SERVICENAMELOWER%.keytab" >> "$CONF_FILE"
          echo "livy.superusers=$LIVY_SUPERUSERS" >> "$CONF_FILE"
          if [ "$ENABLE_ACCESS_CONTROL" == "true" ]; then
            echo "livy.server.access-control.enabled=true" >> "$CONF_FILE"

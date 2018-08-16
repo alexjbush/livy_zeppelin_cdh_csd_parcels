@@ -1,8 +1,8 @@
 {
-  "name": "LIVY",
-  "label": "Livy",
+  "name": "%SERVICENAME%",
+  "label": "%SERVICENAME%",
   "description": "Apache Livy is a REST Service for Apache Spark. This service runs a Livy REST service.",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "compatibility": {
     "cdhVersion": {
       "min": "5.11.0"
@@ -17,12 +17,12 @@
   "icon": "images/icon.png",
   "parcel": {
     "requiredTags": [
-      "livy",
+      "%SERVICENAMELOWER%",
       "spark"
     ],
     "optionalTags": [
       "spark2",
-      "livy-plugin"
+      "%SERVICENAMELOWER%-plugin"
     ]
   },
   "serviceDependencies": [
@@ -61,10 +61,10 @@
     ]
   },
   "parameters": [],
-  "rolesWithExternalLinks" : ["LIVY_REST_SERVER"],
+  "rolesWithExternalLinks" : ["%SERVICENAME%_REST_SERVER"],
   "roles": [
     {
-      "name": "LIVY_REST_SERVER",
+      "name": "%SERVICENAME%_REST_SERVER",
       "label": "Livy REST Server",
       "pluralLabel": "Livy REST Servers",
       "jvmBased": true,
@@ -84,8 +84,8 @@
           "LIVY_SPARK_VERSION": "${livy_spark_version}",
           "SSL_ENABLED": "${ssl_enabled}",
           "KEYSTORE_LOCATION": "${ssl_server_keystore_location}",
-          "KEYSTORE_PASSWORD": "${ssl_server_keystore_keypassword}",
-          "KEYSTORE_KEYPASSWORD": "${ssl_server_keystore_password}",
+          "KEYSTORE_PASSWORD": "${ssl_server_keystore_password}",
+          "KEYSTORE_KEYPASSWORD": "${ssl_server_keystore_keypassword}",
           "IVY_DATA_DIR": "${ivy_data_dir}"
         }
       },
@@ -107,9 +107,9 @@
         "maxInstances": 2
       },
       "logging": {
-        "configFilename": "livy-conf/log4j.properties",
-        "dir": "/var/log/livy",
-        "filename": "livy-rest-server-${host}.log",
+        "configFilename": "%SERVICENAMELOWER%-conf/log4j.properties",
+        "dir": "/var/log/%SERVICENAMELOWER%",
+        "filename": "%SERVICENAMELOWER%-rest-server-${host}.log",
         "modifiable": true,
         "loggingType": "log4j"
       },
@@ -209,7 +209,7 @@
           "required": "false",
           "type": "path",
           "pathType": "localDataDir",
-          "default": "/var/local/livy/ivy",
+          "default": "/var/local/%SERVICENAMELOWER%/ivy",
           "required": "true",
           "minLength": 1,
           "configurableInWizard": true
@@ -263,7 +263,7 @@
       "configWriter": {
         "generators": [
           {
-            "filename": "livy-conf/livy.conf",
+            "filename": "%SERVICENAMELOWER%-conf/livy.conf",
             "configFormat": "properties",
             "includedParams": [
               "livy_server_port",
@@ -277,15 +277,15 @@
         ],
         "auxConfigGenerators": [
           {
-            "filename": "livy-conf/livy-env.sh",
+            "filename": "%SERVICENAMELOWER%-conf/livy-env.sh",
             "sourceFilename": "aux/client/livy-env.sh"
           }
         ],
         "peerConfigGenerators" : [
           {
-            "filename": "livy-conf/server.properties",
+            "filename": "%SERVICENAMELOWER%-conf/server.properties",
             "params": ["livy_server_port", "ssl_enabled", "livy_spark_version" ],
-            "roleName": "LIVY_REST_SERVER"
+            "roleName": "%SERVICENAME%_REST_SERVER"
           }
         ]
       }
@@ -293,16 +293,16 @@
   ],
   "gateway" : {
     "alternatives" : {
-      "name" : "livy-conf",
+      "name" : "%SERVICENAMELOWER%-conf",
       "priority" : 51,
-      "linkRoot" : "/etc/livy"
+      "linkRoot" : "/etc/%SERVICENAMELOWER%"
     },
     "configWriter" : {
        "peerConfigGenerators" : [
           {
-            "filename": "livy-conf/server.properties",
+            "filename": "%SERVICENAMELOWER%-conf/server.properties",
             "params": ["livy_server_port", "ssl_enabled", "livy_spark_version" ],
-            "roleName": "LIVY_REST_SERVER"
+            "roleName": "%SERVICENAME%_REST_SERVER"
           }
         ]
      }

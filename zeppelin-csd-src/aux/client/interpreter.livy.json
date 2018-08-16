@@ -1,89 +1,86 @@
-    "{{INTERPRETER_ID}}": {
-      "id": "{{INTERPRETER_ID}}",
-      "name": "{{INTERPRETER_NAME}}",
-      "group": "livy",
-      "properties": {
-        "zeppelin.livy.pull_status.interval.millis": "1000",
-        "livy.spark.executor.memory": "{{EXECUTOR_MEMORY}}",
-        "livy.spark.executor.extraJavaOptions": "{{EXECUTOR_EXTRA_OPTIONS}}",
-        "zeppelin.livy.session.create_timeout": "120",
-        "zeppelin.livy.principal": "{{LIVY_PRINCIPAL}}",
-        "zeppelin.livy.spark.sql.maxResult": "1000",
-        "zeppelin.interpreter.localRepo": "{{DATA_DIR}}/local-repo/{{INTERPRETER_ID}}",
-        "zeppelin.livy.keytab": "{{LIVY_KEYTAB}}",
-        "zeppelin.interpreter.output.limit": "102400",
-        "zeppelin.livy.concurrentSQL": "false",
-        "livy.spark.executor.cores": "",
-        "zeppelin.livy.displayAppInfo": "true",
-        "zeppelin.livy.url": "{{LIVY_URL}}",
-        "livy.spark.dynamicAllocation.minExecutors": "",
-        "livy.spark.driver.cores": "",
-        "livy.spark.jars.packages": "{{LIVY_SPARK_JARS_PACKAGES}}",
-        "livy.spark.jars": "{{LIVY_SPARK_JARS}}",
-        "livy.spark.dynamicAllocation.enabled": "",
-        "livy.spark.executor.instances": "",
-        "livy.spark.dynamicAllocation.cachedExecutorIdleTimeout": "",
-        "livy.spark.dynamicAllocation.maxExecutors": "{{MAX_EXECUTORS}}",
-        "livy.spark.dynamicAllocation.initialExecutors": "",
-        "livy.spark.driver.memory": "{{DRIVER_MEMORY}}"
-      },
-      "status": "READY",
-      "interpreterGroup": [
-        {
-          "name": "spark",
-          "class": "org.apache.zeppelin.livy.LivySparkInterpreter",
-          "defaultInterpreter": true,
-          "editor": {
-            "language": "scala",
-            "editOnDblClick": false
-          }
-        },
-        {
-          "name": "sql",
-          "class": "org.apache.zeppelin.livy.LivySparkSQLInterpreter",
-          "defaultInterpreter": false,
-          "editor": {
-            "language": "sql",
-            "editOnDblClick": false
-          }
-        },
-        {
-          "name": "pyspark",
-          "class": "org.apache.zeppelin.livy.LivyPySparkInterpreter",
-          "defaultInterpreter": false,
-          "editor": {
-            "language": "python",
-            "editOnDblClick": false
-          }
-        },
-        {
-          "name": "pyspark3",
-          "class": "org.apache.zeppelin.livy.LivyPySpark3Interpreter",
-          "defaultInterpreter": false,
-          "editor": {
-            "language": "python",
-            "editOnDblClick": false
-          }
-        },
-        {
-          "name": "sparkr",
-          "class": "org.apache.zeppelin.livy.LivySparkRInterpreter",
-          "defaultInterpreter": false,
-          "editor": {
-            "language": "r",
-            "editOnDblClick": false
-          }
-        }
-      ],
-      "dependencies": [],
-      "option": {
-        "remote": true,
-        "port": -1,
-        "perNote": "{{INTERPRETER_FOR_NOTE}}",
-        "perUser": "{{INTERPRETER_FOR_USER}}",
-        "isExistingProcess": false,
-        "setPermission": false,
-        "users": [],
-        "isUserImpersonate": false
+{
+  "id": "",
+  "name": "",
+  "group": "livy",
+  "properties": {
+    "zeppelin.livy.pull_status.interval.millis": "1000",
+    "zeppelin.livy.session.create_timeout": "120",
+    "zeppelin.livy.principal": "",
+    "zeppelin.livy.spark.sql.maxResult": "1000",
+    "zeppelin.livy.keytab": "",
+    "zeppelin.interpreter.output.limit": "102400",
+    "zeppelin.livy.concurrentSQL": "false",
+    "livy.spark.executor.cores": "",
+    "zeppelin.livy.displayAppInfo": "true",
+    "livy.spark.dynamicAllocation.minExecutors": "",
+    "livy.spark.driver.cores": "",
+    "livy.spark.jars.packages": "",
+    "livy.spark.jars": "",
+    "livy.spark.dynamicAllocation.enabled": "",
+    "livy.spark.executor.instances": "",
+    "livy.spark.dynamicAllocation.cachedExecutorIdleTimeout": "",
+    "livy.spark.dynamicAllocation.maxExecutors": "",
+    "livy.spark.dynamicAllocation.initialExecutors": "",
+    "livy.spark.driver.memory": "",
+    "livy.spark.executor.memory": ""
+  },
+  "status": "READY",
+  "interpreterGroup": [
+    {
+      "name": "spark",
+      "class": "org.apache.zeppelin.livy.LivySparkInterpreter",
+      "defaultInterpreter": true,
+      "editor": {
+        "language": "scala",
+        "editOnDblClick": false
       }
     },
+    {
+      "name": "sql",
+      "class": "org.apache.zeppelin.livy.LivySparkSQLInterpreter",
+      "defaultInterpreter": false,
+      "editor": {
+        "language": "sql",
+        "editOnDblClick": false
+      }
+    },
+    {
+      "name": "pyspark",
+      "class": "org.apache.zeppelin.livy.LivyPySparkInterpreter",
+      "defaultInterpreter": false,
+      "editor": {
+        "language": "python",
+        "editOnDblClick": false
+      }
+    },
+    {
+      "name": "pyspark3",
+      "class": "org.apache.zeppelin.livy.LivyPySpark3Interpreter",
+      "defaultInterpreter": false,
+      "editor": {
+        "language": "python",
+        "editOnDblClick": false
+      }
+    },
+    {
+      "name": "sparkr",
+      "class": "org.apache.zeppelin.livy.LivySparkRInterpreter",
+      "defaultInterpreter": false,
+      "editor": {
+        "language": "r",
+        "editOnDblClick": false
+      }
+    }
+  ],
+  "dependencies": [],
+  "option": {
+    "remote": true,
+    "port": -1,
+    "perNote": "shared",
+    "perUser": "shared",
+    "isExistingProcess": false,
+    "setPermission": false,
+    "users": [],
+    "isUserImpersonate": false
+  }
+}

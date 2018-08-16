@@ -1,7 +1,5 @@
 {
   "interpreterSettings": {
-{{SPARK_CONFIG_spark}}
-{{SPARK_CONFIG_spark2}}
     "2CZ9EX8ZX": {
       "id": "2CZ9EX8ZX",
       "name": "md",
@@ -36,8 +34,6 @@
   },
   "interpreterBindings": {
     "2CYUMWD38": [
-      {{INTERPRETER_BINDING_spark}}
-      {{INTERPRETER_BINDING_spark2}}
       "2CZ9EX8ZX"
     ]
   },
