@@ -11,7 +11,7 @@ ZEPPELIN_URL=http://apache.mirror.anlx.net/zeppelin/zeppelin-0.8.0/zeppelin-0.8.
 ZEPPELIN_MD5="d87a285c0640ed02ad74bea219525364"
 ZEPPELIN_VERSION=0.8.0
 
-livy_service_name="LIVYBETA"
+livy_service_name="LIVY"
 livy_service_name_lower="$( echo $livy_service_name | tr '[:upper:]' '[:lower:]' )"
 livy_archive="$( basename $LIVY_URL )"
 livy_folder="$( basename $livy_archive .zip )"
@@ -20,7 +20,7 @@ livy_parcel_name="$livy_parcel_folder-el7.parcel"
 livy_built_folder="${livy_parcel_folder}_build"
 livy_csd_build_folder="livy_csd_build"
 
-zeppelin_service_name="ZEPPELINBETA"
+zeppelin_service_name="ZEPPELIN"
 zeppelin_service_name_lower="$( echo $zeppelin_service_name | tr '[:upper:]' '[:lower:]' )"
 zeppelin_archive="$( basename $ZEPPELIN_URL )"
 zeppelin_folder="$( basename $zeppelin_archive .tgz )"
