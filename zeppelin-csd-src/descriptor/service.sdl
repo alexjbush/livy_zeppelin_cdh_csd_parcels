@@ -70,8 +70,7 @@
           "ZEPPELIN_DATA_DIR": "${zeppelin_data_dir}",
           "ZEPPELIN_CONF_FS_DIR": "${zeppelin_conf_dir}",
           "ZEPPELIN_NOTEBOOK_DIR": "${zeppelin_notebook_dir}",
-          "ZEPPELIN_EXTRA_JAVA_OPTIONS": "${zeppelin_java_options}",
-          "HADOOP_EXTRA_OPTIONS": "${hadoop_options}"
+          "ZEPPELIN_EXTRA_JAVA_OPTIONS": "${zeppelin_java_options}"
         }
       },
       "stopRunner": {
@@ -90,8 +89,7 @@
             "ZEPPELIN_DATA_DIR": "${zeppelin_data_dir}",
             "ZEPPELIN_CONF_FS_DIR": "${zeppelin_conf_dir}",
             "ZEPPELIN_NOTEBOOK_DIR": "${zeppelin_notebook_dir}",
-            "ZEPPELIN_EXTRA_JAVA_OPTIONS": "${zeppelin_java_options}",
-            "HADOOP_EXTRA_OPTIONS": "${hadoop_options}"
+            "ZEPPELIN_EXTRA_JAVA_OPTIONS": "${zeppelin_java_options}"
           }
         }
       },
@@ -146,13 +144,6 @@
           "name": "zeppelin_java_options",
           "label": "Zeppelin Java Options",
           "description": "Extra java options given as ZEPPELIN_JAVA_OPTS.",
-          "required": "false",
-          "type": "string"
-        },
-        {
-          "name": "hadoop_options",
-          "label": "Hadoop Options",
-          "description": "Extra java options given as HADOOP_OPTS.",
           "required": "false",
           "type": "string"
         },

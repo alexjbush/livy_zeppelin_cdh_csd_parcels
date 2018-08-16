@@ -115,11 +115,6 @@ def base_conf():
         os.environ["ZEPPELIN_EXTRA_JAVA_OPTIONS"],
         os.environ["ZEPPELIN_MEMORY"], os.environ["ZEPPELIN_MEMORY"])
 
-    # Hadoop opts
-    if "HADOOP_OPTS" not in os.environ.keys():
-        os.environ["HADOOP_OPTS"] = ""
-    os.environ["HADOOP_OPTS"] = "%s %s" % (os.environ["HADOOP_EXTRA_OPTIONS"], os.environ["HADOOP_OPTS"])
-
     # Check and set various conf directories
     base_conf_dir = os.environ["CONF_DIR"]
     zeppelin_conf_dir = "%s/%SERVICENAMELOWER%-conf" % base_conf_dir
@@ -168,11 +163,11 @@ def start():
     with open(completed_filename, 'w+') as f:
         json.dump(interpreter_struct, f)
 
-    run_command("hdfs dfs -mkdir -p %s" % os.environ["ZEPPELIN_CONF_FS_DIR"])
+    run_command("hdfs dfs -mkdir -p %s" % (os.environ["ZEPPELIN_CONF_FS_DIR"]))
 
     run_command("hdfs dfs -put -f %s %s" % (completed_filename, os.environ["ZEPPELIN_CONF_FS_DIR"]))
 
-    run_command("hdfs dfs -mkdir -p %s" % os.environ["ZEPPELIN_NOTEBOOK_DIR"])
+    run_command("hdfs dfs -mkdir -p %s" % (os.environ["ZEPPELIN_NOTEBOOK_DIR"]))
 
     shiro_filename = "%s/shiro.ini" % zeppelin_conf_dir
     error_if_missing(interpreter_json_filename)
